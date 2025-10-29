@@ -1,0 +1,2 @@
+C:/Users/PC/Proyecto Integrador PDM/convivezen/android/app/.cxx/Debug/106i5c38/x86/CMakeFiles/edit_cache.dir
+C:/Users/PC/Proyecto Integrador PDM/convivezen/android/app/.cxx/Debug/106i5c38/x86/CMakeFiles/rebuild_cache.dir
