@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
       title: 'ConviveZen',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.pink,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       //Inicializar ruta

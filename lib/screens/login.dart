@@ -101,12 +101,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
+      backgroundColor: Color.fromARGB(255, 255, 155, 188),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 _isLogin ? "Iniciar Sesión" : "Crear Cuenta",
                 style: GoogleFonts.archivo(
                   textStyle: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
@@ -134,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     : "Crea una cuenta para comenzar tu viaje fitness",
                 style: GoogleFonts.archivo(
                   textStyle: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 16,
                   ),
                 ),
@@ -165,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       "¿Olvidaste tu contraseña?",
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(color: Colors.black54),
                     ),
                   ),
                 ),
@@ -188,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent,
+                            color: Color.fromARGB(255, 255, 155, 188),
                           ),
                         ),
                 ),
@@ -201,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     _isLogin
                         ? "¿No tienes una cuenta? "
                         : "¿Ya tienes una cuenta? ",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.black),
                   ),
                   //Redireccion a Registrarse
                   TextButton(
@@ -217,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       "Regístrate",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -240,18 +240,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withOpacity(0.3),
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextField(
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.white70),
-          prefixIcon: Icon(icon, color: Colors.white70),
+          labelStyle: TextStyle(color: Colors.black38),
+          prefixIcon: Icon(icon, color: Colors.black38),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),

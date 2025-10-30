@@ -3,6 +3,9 @@
 /lib/firebase_options.dart
 lib\firebase_options.dart
 
+android\app\.cxx
+android/app/.cxx
+
 # Miscellaneous
 *.class
 *.lock

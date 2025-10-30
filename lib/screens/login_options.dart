@@ -57,7 +57,7 @@ class _LoginOptionsState extends State<LoginOptions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
+      backgroundColor: const Color.fromARGB(255, 255, 155, 188),
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: Colors.white))
           : Builder(builder: (context) {
@@ -80,11 +80,11 @@ class _LoginOptionsState extends State<LoginOptions> {
                         //Titulo
                         Padding(
                           padding: const EdgeInsets.fromLTRB(25.0, 0, 0, 0),
-                          child: Text("Es tu momento.",
+                          child: Text("Bienvenid@ a ConviveZen",
                               style: GoogleFonts.archivo(
                                   textStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 30,
+                                      color: Colors.black,
+                                      fontSize: 28,
                                       fontWeight: FontWeight.bold))),
                         ),
                       ],
@@ -97,12 +97,13 @@ class _LoginOptionsState extends State<LoginOptions> {
                           padding: const EdgeInsets.fromLTRB(25.8, 0, 0, 0),
                         ),
                         Text(
-                            "Encuentra amigos y comparte tus metas con\n ellos",
+                            "Respira profundo, aquí comienza tu espacio de calma.",
                             style: GoogleFonts.archivo(
                                 textStyle: TextStyle(
-                                    color: Colors.white, fontSize: 15)))
+                                    color: Colors.black, fontSize: 15)))
                       ],
                     ),
+
                     SizedBox(height: 50),
                     // Botón para iniciar sesión con email
                     Padding(
@@ -157,7 +158,7 @@ class _LoginOptionsState extends State<LoginOptions> {
                               onPressed: _goToEmailLogin,
                               child: Text(
                                 "¿No tienes cuenta? Regístrate",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.black),
                               ),
                             ),
                           ))
@@ -169,7 +170,7 @@ class _LoginOptionsState extends State<LoginOptions> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-//Boton para iniciar con Apple
+                        //Boton para iniciar con Apple
 //                          SocialButton(
 //                            icon: "apple",
 //                            onPressed: () {
@@ -215,7 +216,7 @@ class _LoginOptionsState extends State<LoginOptions> {
                         child: Text(
                           "Al registrarte aceptas los Términos y Condiciones",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             decoration: TextDecoration.underline,
                           ),
                         ),
@@ -268,7 +269,7 @@ class SocialButton extends StatelessWidget {
           shape: CircleBorder(),
           padding: EdgeInsets.all(12),
         ),
-        child: Icon(iconData, color: Colors.blueAccent, size: 30),
+        child: Icon(iconData, color: Colors.black, size: 30),
       ),
     );
   }

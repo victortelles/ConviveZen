@@ -103,12 +103,12 @@ class _RegisterState extends State<Register> {
   //Armado de Estructura & Estilos
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
+      backgroundColor: Color.fromARGB(255, 255, 155, 188),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -123,7 +123,7 @@ class _RegisterState extends State<Register> {
               "Crear Cuenta",
               style: GoogleFonts.archivo(
                 textStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
@@ -133,10 +133,10 @@ class _RegisterState extends State<Register> {
             //Apartado de descripcion
             SizedBox(height: 10),
             Text(
-              "Crea una cuenta para comenzar tu viaje fitness",
+              "Únete y comienza a construir tu espacio de bienestar y armonía.",
               style: GoogleFonts.archivo(
                 textStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 16,
                 ),
               ),
@@ -201,7 +201,7 @@ class _RegisterState extends State<Register> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
+                          color: Color.fromARGB(255, 255, 155, 188),
                         ),
                       ),
               ),
