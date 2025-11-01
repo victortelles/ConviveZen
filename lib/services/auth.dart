@@ -14,11 +14,34 @@ class AuthService {
   // Verifica si el usuario ya está autenticado y navega en consecuencia
   Future<void> checkCurrentUser(BuildContext context) async {
     User? user = _auth.currentUser;
+    print('DEBUG: Checking current user: ${user?.uid}');
+    
     if (user != null) {
-      final userExists = await _firestoreService.getUserById(user.uid);
-      if (userExists != null) {
-        Navigator.of(context).pushReplacementNamed('/home');
+      try {
+        final userModel = await _firestoreService.getUserById(user.uid);
+        print('DEBUG: User model found: ${userModel?.email}, isFirstTime: ${userModel?.isFirstTime}');
+        
+        if (userModel != null) {
+          // Update AppState with user profile
+          final appState = Provider.of<AppState>(context, listen: false);
+          await appState.saveUserToFirestore(userModel);
+          
+          // Check if user needs onboarding (isFirstTime = true)
+          if (userModel.isFirstTime) {
+            print('DEBUG: Redirecting to onboarding');
+            Navigator.of(context).pushReplacementNamed('/onboarding');
+          } else {
+            print('DEBUG: Redirecting to home');
+            Navigator.of(context).pushReplacementNamed('/home');
+          }
+        } else {
+          print('DEBUG: User model is null, staying on login screen');
+        }
+      } catch (e) {
+        print('DEBUG: Error checking user: $e');
       }
+    } else {
+      print('DEBUG: No current user, staying on login screen');
     }
   }
 
@@ -51,22 +74,26 @@ class AuthService {
         final existingUser = await _firestoreService.getUserById(user.uid);
 
         if (existingUser == null) {
+          // Create basic user profile - full data will be filled in onboarding
           final newUser = UserModel(
             uid: user.uid,
             email: user.email ?? '',
             name: user.displayName ?? 'Usuario',
             profilePic: user.photoURL,
             authProvider: 'google',
-            age: 18, // Default, will be updated in onboarding
-            anxietyType: 'generalized', // Default, will be updated in onboarding
-            personalityType: 'ambivert', // Default, will be updated in onboarding
+            isFirstTime: true, // User needs to complete onboarding
           );
 
           await Provider.of<AppState>(context, listen: false)
               .saveUserToFirestore(newUser);
           Navigator.of(context).pushReplacementNamed('/onboarding');
         } else {
-          Navigator.of(context).pushReplacementNamed('/home');
+          // Check if existing user needs onboarding
+          if (existingUser.isFirstTime) {
+            Navigator.of(context).pushReplacementNamed('/onboarding');
+          } else {
+            Navigator.of(context).pushReplacementNamed('/home');
+          }
         }
       }
     } catch (e) {
@@ -85,6 +112,7 @@ class AuthService {
     required String name,
     required String email,
     required String password,
+    required DateTime birthdate,
     required BuildContext context,
   }) async {
     try {
@@ -95,14 +123,14 @@ class AuthService {
 
       await userCredential.user?.updateDisplayName(name);
 
+      // Create basic user profile - full data will be filled in onboarding
       final newUser = UserModel(
         uid: userCredential.user!.uid,
         email: email,
         name: name,
         authProvider: 'email',
-        age: 18, // Default, will be updated in onboarding
-        anxietyType: 'generalized', // Default, will be updated in onboarding
-        personalityType: 'ambivert', // Default, will be updated in onboarding
+        birthdate: birthdate,
+        isFirstTime: true, // User needs to complete onboarding
       );
 
       // Save to Firestore

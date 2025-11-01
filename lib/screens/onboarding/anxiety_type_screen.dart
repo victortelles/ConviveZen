@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/onboarding_state.dart';
+import '../../widgets/onboarding_scaffold.dart';
 
 class AnxietyTypeScreen extends StatefulWidget {
-  final Function(String) onAnxietyTypeSelected;
-
-  const AnxietyTypeScreen({Key? key, required this.onAnxietyTypeSelected}) : super(key: key);
+  const AnxietyTypeScreen({Key? key}) : super(key: key);
 
   @override
   _AnxietyTypeScreenState createState() => _AnxietyTypeScreenState();
 }
 
 class _AnxietyTypeScreenState extends State<AnxietyTypeScreen> {
-  String? _selectedType;
-
   final List<Map<String, dynamic>> _anxietyTypes = [
     {
       'key': 'generalized',
@@ -51,144 +50,48 @@ class _AnxietyTypeScreenState extends State<AnxietyTypeScreen> {
     },
   ];
 
+  void _toggleAnxietyType(String typeKey) {
+    final onboardingState = Provider.of<OnboardingState>(context, listen: false);
+    List<String> currentTypes = List.from(onboardingState.anxietyTypes);
+    
+    if (currentTypes.contains(typeKey)) {
+      currentTypes.remove(typeKey);
+    } else {
+      currentTypes.add(typeKey);
+    }
+    
+    onboardingState.setAnxietyTypes(currentTypes);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '¿Qué tipo de ansiedad experimentas principalmente?',
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Colors.pink.shade700,
-            ),
-            textAlign: TextAlign.center,
+    return Consumer<OnboardingState>(
+      builder: (context, onboardingState, _) {
+        return OnboardingScaffold(
+          title: '¿Qué tipos de ansiedad experimentas?',
+          subtitle: 'Puedes seleccionar varios tipos. Esto nos ayuda a personalizar las herramientas más efectivas para ti',
+          buttonText: onboardingState.anxietyTypes.isNotEmpty 
+            ? 'Continuar (${onboardingState.anxietyTypes.length} seleccionado${onboardingState.anxietyTypes.length > 1 ? 's' : ''})'
+            : 'Selecciona al menos uno',
+          isValid: onboardingState.anxietyTypes.isNotEmpty,
+          onContinue: () => onboardingState.nextStep(),
+          child: ListView.builder(
+            itemCount: _anxietyTypes.length,
+            itemBuilder: (context, index) {
+              final type = _anxietyTypes[index];
+              final isSelected = onboardingState.anxietyTypes.contains(type['key']);
+              
+              return OnboardingListItem(
+                icon: type['icon'],
+                title: type['title'],
+                description: type['description'],
+                isSelected: isSelected,
+                onTap: () => _toggleAnxietyType(type['key']),
+              );
+            },
           ),
-          SizedBox(height: 16),
-          Text(
-            'No te preocupes, esto nos ayuda a personalizar las herramientas más efectivas para ti',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.pink.shade600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 30),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _anxietyTypes.length,
-              itemBuilder: (context, index) {
-                final type = _anxietyTypes[index];
-                final isSelected = _selectedType == type['key'];
-                
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedType = type['key'];
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.pink.shade100 : Colors.white,
-                        border: Border.all(
-                          color: isSelected ? Colors.pink.shade400 : Colors.pink.shade200,
-                          width: isSelected ? 2 : 1,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.pink.shade100,
-                            blurRadius: 5,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: isSelected ? Colors.pink.shade400 : Colors.pink.shade200,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Icon(
-                              type['icon'],
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  type['title'],
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.pink.shade700,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  type['description'],
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.pink.shade600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (isSelected)
-                            Icon(
-                              Icons.check_circle,
-                              color: Colors.pink.shade400,
-                              size: 24,
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 55,
-            child: ElevatedButton(
-              onPressed: _selectedType != null
-                  ? () => widget.onAnxietyTypeSelected(_selectedType!)
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _selectedType != null ? Colors.pink.shade400 : Colors.grey.shade300,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                elevation: 3,
-              ),
-              child: Text(
-                'Continuar',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

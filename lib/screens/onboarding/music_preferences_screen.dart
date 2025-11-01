@@ -1,176 +1,232 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/onboarding_state.dart';
+import '../../widgets/onboarding_scaffold.dart';
 
 class MusicPreferencesScreen extends StatefulWidget {
-  final Function(List<String>) onMusicSelected;
-
-  const MusicPreferencesScreen({Key? key, required this.onMusicSelected}) : super(key: key);
+  const MusicPreferencesScreen({Key? key}) : super(key: key);
 
   @override
   _MusicPreferencesScreenState createState() => _MusicPreferencesScreenState();
 }
 
 class _MusicPreferencesScreenState extends State<MusicPreferencesScreen> {
-  List<String> _selectedGenres = [];
+  List<Map<String, dynamic>> _filteredGenres = [];
+  TextEditingController _searchController = TextEditingController();
 
-  final List<Map<String, dynamic>> _musicGenres = [
-    {'key': 'classical', 'title': 'Clásica', 'icon': Icons.piano, 'color': Colors.purple},
-    {'key': 'ambient', 'title': 'Ambiente/Chill', 'icon': Icons.cloud, 'color': Colors.blue},
-    {'key': 'nature', 'title': 'Sonidos de la naturaleza', 'icon': Icons.nature, 'color': Colors.green},
-    {'key': 'meditation', 'title': 'Meditación', 'icon': Icons.self_improvement, 'color': Colors.indigo},
-    {'key': 'lo_fi', 'title': 'Lo-Fi Hip Hop', 'icon': Icons.headphones, 'color': Colors.orange},
-    {'key': 'instrumental', 'title': 'Instrumental', 'icon': Icons.music_note, 'color': Colors.teal},
-    {'key': 'pop', 'title': 'Pop suave', 'icon': Icons.star, 'color': Colors.pink},
-    {'key': 'jazz', 'title': 'Jazz suave', 'icon': Icons.music_video, 'color': Colors.brown},
-    {'key': 'folk', 'title': 'Folk acústico', 'icon': Icons.park, 'color': Colors.amber},
-    {'key': 'electronic', 'title': 'Electrónica suave', 'icon': Icons.electrical_services, 'color': Colors.cyan},
-    {'key': 'world', 'title': 'Música del mundo', 'icon': Icons.public, 'color': Colors.deepOrange},
-    {'key': 'binaural', 'title': 'Frecuencias binaurales', 'icon': Icons.waves, 'color': Colors.deepPurple},
+  // Comprehensive list of music genres with icons and colors
+  final List<Map<String, dynamic>> _allGenres = [
+    // Relaxing/Therapeutic genres (prioritized)
+    {'name': 'Ambient', 'description': 'Música atmosférica y relajante', 'icon': Icons.cloud, 'color': Colors.blue},
+    {'name': 'Clásica', 'description': 'Música clásica tradicional', 'icon': Icons.piano, 'color': Colors.purple},
+    {'name': 'Meditación', 'description': 'Música específica para meditar', 'icon': Icons.self_improvement, 'color': Colors.indigo},
+    {'name': 'New Age', 'description': 'Música espiritual y tranquila', 'icon': Icons.spa, 'color': Colors.teal},
+    {'name': 'Sonidos de la naturaleza', 'description': 'Sonidos del entorno natural', 'icon': Icons.nature, 'color': Colors.green},
+    {'name': 'Lo-Fi Hip Hop', 'description': 'Hip hop relajado y atmosférico', 'icon': Icons.headphones, 'color': Colors.orange},
+    {'name': 'Instrumental', 'description': 'Música sin vocals', 'icon': Icons.music_note, 'color': Colors.cyan},
+    {'name': 'Jazz suave', 'description': 'Jazz melódico y tranquilo', 'icon': Icons.music_video, 'color': Colors.brown},
+    {'name': 'Folk acústico', 'description': 'Música folk con instrumentos acústicos', 'icon': Icons.park, 'color': Colors.amber},
+    {'name': 'Bossa Nova', 'description': 'Estilo brasileño suave y elegante', 'icon': Icons.beach_access, 'color': Colors.lightBlue},
+    {'name': 'Chill-out', 'description': 'Música electrónica relajante', 'icon': Icons.ac_unit, 'color': Colors.lightGreen},
+    {'name': 'Downtempo', 'description': 'Electrónica de tempo lento', 'icon': Icons.schedule, 'color': Colors.grey},
+    
+    // Popular genres
+    {'name': 'Pop', 'description': 'Música popular contemporánea', 'icon': Icons.star, 'color': Colors.pink},
+    {'name': 'Rock', 'description': 'Rock y sus variantes', 'icon': Icons.music_note, 'color': Colors.red},
+    {'name': 'Hip Hop', 'description': 'Rap y hip hop', 'icon': Icons.headphones, 'color': Colors.deepOrange},
+    {'name': 'R&B', 'description': 'Rhythm and Blues', 'icon': Icons.favorite, 'color': Colors.purple},
+    {'name': 'Country', 'description': 'Música country americana', 'icon': Icons.agriculture, 'color': Colors.brown},
+    {'name': 'Reggae', 'description': 'Música jamaicana', 'icon': Icons.waves, 'color': Colors.green},
+    {'name': 'Blues', 'description': 'Blues tradicional', 'icon': Icons.mood, 'color': Colors.indigo},
+    {'name': 'Soul', 'description': 'Música soul y funk', 'icon': Icons.favorite_border, 'color': Colors.deepPurple},
+    
+    // Electronic genres
+    {'name': 'Electronic', 'description': 'Música electrónica general', 'icon': Icons.electrical_services, 'color': Colors.cyan},
+    {'name': 'House', 'description': 'House y deep house', 'icon': Icons.home, 'color': Colors.orange},
+    {'name': 'Techno', 'description': 'Techno y minimal', 'icon': Icons.computer, 'color': Colors.blue},
+    {'name': 'Trance', 'description': 'Trance y progressive', 'icon': Icons.all_inclusive, 'color': Colors.purple},
+    {'name': 'Dubstep', 'description': 'Dubstep y bass music', 'icon': Icons.graphic_eq, 'color': Colors.red},
+    
+    // World music
+    {'name': 'World Music', 'description': 'Música del mundo', 'icon': Icons.public, 'color': Colors.deepOrange},
+    {'name': 'Latin', 'description': 'Música latina', 'icon': Icons.celebration, 'color': Colors.red},
+    {'name': 'Flamenco', 'description': 'Flamenco español', 'icon': Icons.local_fire_department, 'color': Colors.deepOrange},
+    {'name': 'Celtic', 'description': 'Música celta', 'icon': Icons.forest, 'color': Colors.green},
+    {'name': 'Indian Classical', 'description': 'Música clásica india', 'icon': Icons.temple_hindu, 'color': Colors.orange},
+    {'name': 'African', 'description': 'Música africana tradicional', 'icon': Icons.music_note, 'color': Colors.brown},
+    
+    // Alternative and Indie
+    {'name': 'Alternative', 'description': 'Rock alternativo', 'icon': Icons.alt_route, 'color': Colors.grey},
+    {'name': 'Indie', 'description': 'Música independiente', 'icon': Icons.lightbulb, 'color': Colors.yellow},
+    {'name': 'Grunge', 'description': 'Grunge de los 90s', 'icon': Icons.brush, 'color': Colors.grey},
+    {'name': 'Punk', 'description': 'Punk rock', 'icon': Icons.bolt, 'color': Colors.red},
+    
+    // Other genres
+    {'name': 'Funk', 'description': 'Funk y groove', 'icon': Icons.vibration, 'color': Colors.purple},
+    {'name': 'Disco', 'description': 'Disco y dance', 'icon': Icons.nightlife, 'color': Colors.pink},
+    {'name': 'Gospel', 'description': 'Música gospel', 'icon': Icons.church, 'color': Colors.blue},
+    {'name': 'Opera', 'description': 'Ópera clásica', 'icon': Icons.theater_comedy, 'color': Colors.purple},
+    {'name': 'Heavy Metal', 'description': 'Metal y sus subgéneros', 'icon': Icons.hardware, 'color': Colors.grey},
+    {'name': 'Progressive Rock', 'description': 'Rock progresivo', 'icon': Icons.trending_up, 'color': Colors.blue},
+    
+    // Specialized therapeutic
+    {'name': 'Frecuencias binaurales', 'description': 'Sonidos terapéuticos específicos', 'icon': Icons.waves, 'color': Colors.deepPurple},
+    {'name': 'Música para dormir', 'description': 'Diseñada para facilitar el sueño', 'icon': Icons.bedtime, 'color': Colors.indigo},
+    {'name': 'Música para concentrarse', 'description': 'Optimizada para el enfoque', 'icon': Icons.psychology, 'color': Colors.teal},
+    {'name': 'Cantos gregorianos', 'description': 'Música sacra medieval', 'icon': Icons.church, 'color': Colors.brown},
   ];
 
-  void _toggleGenre(String genreKey) {
+  @override
+  void initState() {
+    super.initState();
+    _filteredGenres = List.from(_allGenres);
+    _searchController.addListener(_filterGenres);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterGenres() {
+    final query = _searchController.text.toLowerCase();
     setState(() {
-      if (_selectedGenres.contains(genreKey)) {
-        _selectedGenres.remove(genreKey);
+      if (query.isEmpty) {
+        _filteredGenres = List.from(_allGenres);
       } else {
-        _selectedGenres.add(genreKey);
+        _filteredGenres = _allGenres
+            .where((genre) => genre['name'].toLowerCase().contains(query))
+            .toList();
       }
     });
   }
 
+  void _toggleGenre(String genreName) {
+    final onboardingState = Provider.of<OnboardingState>(context, listen: false);
+    List<String> currentGenres = List.from(onboardingState.musicGenres);
+    
+    if (currentGenres.contains(genreName)) {
+      currentGenres.remove(genreName);
+    } else {
+      currentGenres.add(genreName);
+    }
+    
+    onboardingState.setMusicGenres(currentGenres);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        children: [
-          Text(
-            '¿Qué tipo de música te relaja?',
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Colors.pink.shade700,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16),
-          Text(
-            'Selecciona los géneros musicales que más te ayudan a relajarte y reducir la ansiedad',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.pink.shade600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 24),
-          Text(
-            'Géneros seleccionados: ${_selectedGenres.length}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.pink.shade500,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 20),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.2,
-              ),
-              itemCount: _musicGenres.length,
-              itemBuilder: (context, index) {
-                final genre = _musicGenres[index];
-                final isSelected = _selectedGenres.contains(genre['key']);
-                
-                return GestureDetector(
-                  onTap: () => _toggleGenre(genre['key']),
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.pink.shade100 : Colors.white,
-                      border: Border.all(
-                        color: isSelected ? Colors.pink.shade400 : Colors.pink.shade200,
-                        width: isSelected ? 2 : 1,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.pink.shade100,
-                          blurRadius: 5,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
+    return Consumer<OnboardingState>(
+      builder: (context, onboardingState, _) {
+        return OnboardingScaffold(
+          title: '¿Qué tipo de música te relaja?',
+          subtitle: 'Busca y selecciona los géneros musicales que más te ayudan a relajarte',
+          buttonText: onboardingState.musicGenres.isNotEmpty 
+            ? 'Continuar (${onboardingState.musicGenres.length} seleccionado${onboardingState.musicGenres.length > 1 ? 's' : ''})'
+            : 'Selecciona al menos uno',
+          isValid: onboardingState.musicGenres.isNotEmpty,
+          onContinue: () => onboardingState.nextStep(),
+          child: Column(
+            children: [
+              // Search bar
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.pink.shade200),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.pink.shade100.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: isSelected ? Colors.pink.shade400 : genre['color'].withOpacity(0.7),
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          child: Icon(
-                            genre['icon'],
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          genre['title'],
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.pink.shade700,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (isSelected) ...[
-                          SizedBox(height: 8),
-                          Icon(
-                            Icons.check_circle,
-                            color: Colors.pink.shade400,
-                            size: 16,
-                          ),
-                        ],
-                      ],
+                  ],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Buscar géneros musicales...',
+                    prefixIcon: Icon(Icons.search, color: Colors.pink.shade400),
+                    suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(Icons.clear, color: Colors.pink.shade300),
+                          onPressed: () {
+                            _searchController.clear();
+                            _filterGenres();
+                          },
+                        )
+                      : null,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    hintStyle: TextStyle(color: Colors.pink.shade300),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Selected count and filters
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.pink.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.pink.shade200),
+                    ),
+                    child: Text(
+                      'Seleccionados: ${onboardingState.musicGenres.length}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.pink.shade700,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-          SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 55,
-            child: ElevatedButton(
-              onPressed: () => widget.onMusicSelected(_selectedGenres),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink.shade400,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                elevation: 3,
+                  Spacer(),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: Text(
+                      '${_filteredGenres.length} géneros',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: Text(
-                _selectedGenres.isEmpty ? 'Omitir' : 'Continuar',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              SizedBox(height: 20),
+
+              // Genres list (changed from grid to list)
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _filteredGenres.length,
+                  itemBuilder: (context, index) {
+                    final genre = _filteredGenres[index];
+                    final isSelected = onboardingState.musicGenres.contains(genre['name']);
+                    
+                    return OnboardingListItem(
+                      icon: genre['icon'],
+                      title: genre['name'],
+                      description: genre['description'],
+                      isSelected: isSelected,
+                      onTap: () => _toggleGenre(genre['name']),
+                    );
+                  },
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -1,7 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/app_state.dart';
 
 class OnboardingCompleteScreen extends StatelessWidget {
   const OnboardingCompleteScreen({Key? key}) : super(key: key);
+
+  Future<void> _completeOnboarding(BuildContext context) async {
+    try {
+      // Mark onboarding as complete for the current user
+      final appState = Provider.of<AppState>(context, listen: false);
+      final currentUser = appState.userProfile;
+      
+      if (currentUser != null) {
+        // Update user to mark onboarding as complete
+        final updatedUser = currentUser.copyWith(isFirstTime: false);
+        await appState.saveUserToFirestore(updatedUser);
+      }
+      
+      // Navigate to home
+      Navigator.of(context).pushReplacementNamed('/home');
+    } catch (e) {
+      // If there's an error, still navigate to home but show a message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Configuración guardada. Bienvenido a ConviveZen!')),
+      );
+      Navigator.of(context).pushReplacementNamed('/home');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +102,7 @@ class OnboardingCompleteScreen extends StatelessWidget {
             width: double.infinity,
             height: 55,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacementNamed('/home');
-              },
+              onPressed: () => _completeOnboarding(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink.shade400,
                 foregroundColor: Colors.white,

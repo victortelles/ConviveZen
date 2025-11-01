@@ -78,6 +78,7 @@ class _RegisterState extends State<Register> {
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
+      birthdate: _selectedDate!,
       context: context
     );
 
@@ -91,8 +92,8 @@ class _RegisterState extends State<Register> {
       return;
     }
 
-    //Navegacion tras el registro exitoso
-    Navigator.of(context).push(MaterialPageRoute(
+    //Navegacion tras el registro exitoso - ahora va directo a onboarding
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (_) => OnboardingFlow()));
   }
 
