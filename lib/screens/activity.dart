@@ -132,16 +132,47 @@ class _ActivityScreenState extends State<ActivityScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Todos tus hábitos", 
-                style: GoogleFonts.poppins(
-                    fontSize: 16, fontWeight: FontWeight.bold, color: appState.isDarkMode ? Colors.white : Colors.black)),
+            Row(
+              children: [
+                Icon(Icons.analytics_outlined, color: Colors.blue.shade700),
+                SizedBox(width: 8),
+                Text("Estadísticas de Crisis", 
+                    style: GoogleFonts.poppins(
+                        fontSize: 16, fontWeight: FontWeight.bold, color: appState.isDarkMode ? Colors.white : Colors.black)),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.orange.shade300),
+                  ),
+                  child: Text(
+                    'PREMIUM',
+                    style: TextStyle(
+                      color: Colors.orange.shade700,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            Text(
+              "Accede a estadísticas detalladas de tus crisis de ansiedad, patrones y mejoras con la suscripción Premium",
+              style: TextStyle(
+                fontSize: 14,
+                color: appState.isDarkMode ? Colors.white70 : Colors.black54,
+              ),
+            ),
             SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _statColumn("Éxitos", "96%", Colors.green, appState),
-                _statColumn("Completados", "244", Colors.blue, appState),
-                _statColumn("Puntos", "+332", Colors.orange, appState),
+                _statColumn("Crisis/Mes", "--", Colors.blue, appState),
+                _statColumn("Mejora", "--", Colors.green, appState),
+                _statColumn("Duración Prom", "--", Colors.orange, appState),
               ],
             ),
           ],
@@ -168,13 +199,62 @@ class _ActivityScreenState extends State<ActivityScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-
-          // Placeholder para el gráfico (feature que agregaremos próximamente)
-
           children: [
-            Text("Hábitos", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: appState.isDarkMode ? Colors.white : Colors.black)),
-            SizedBox(height: 8),
-            Container(height: 100, color: appState.isDarkMode ? Colors.grey[700] : Colors.grey[300]),
+            Row(
+              children: [
+                Icon(Icons.trending_up, color: Colors.blue.shade700),
+                SizedBox(width: 8),
+                Text("Análisis de Progreso", 
+                    style: GoogleFonts.poppins(
+                        fontSize: 16, fontWeight: FontWeight.bold, color: appState.isDarkMode ? Colors.white : Colors.black)),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.orange.shade300),
+                  ),
+                  child: Text(
+                    'PREMIUM',
+                    style: TextStyle(
+                      color: Colors.orange.shade700,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: appState.isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Colors.orange.shade300.withOpacity(0.3),
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.lock_outline, 
+                        color: Colors.orange.shade600, size: 30),
+                    SizedBox(height: 4),
+                    Text(
+                      "Gráficos Premium",
+                      style: TextStyle(
+                        color: appState.isDarkMode ? Colors.white70 : Colors.black54,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -186,9 +266,35 @@ class _ActivityScreenState extends State<ActivityScreen> {
       color: appState.isDarkMode ? Colors.grey[800] : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(Icons.emoji_emotions, color: Colors.yellow, size: 30),
-        title: Text("Alegre", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: appState.isDarkMode ? Colors.white : Colors.black)),
-        subtitle: Text("Estado de ánimo", style: TextStyle(color: appState.isDarkMode ? Colors.white70 : Colors.black54)),
+        leading: Icon(Icons.psychology, color: Colors.blue.shade600, size: 30),
+        title: Row(
+          children: [
+            Text("Estado Emocional", 
+                style: GoogleFonts.poppins(
+                    fontSize: 16, fontWeight: FontWeight.bold, color: appState.isDarkMode ? Colors.white : Colors.black)),
+            Spacer(),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.green.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'GRATIS',
+                style: TextStyle(
+                  color: Colors.green.shade700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        subtitle: Text("Registra tu estado emocional diariamente", 
+            style: TextStyle(color: appState.isDarkMode ? Colors.white70 : Colors.black54)),
+        onTap: () {
+          _showAlert("Registro de estado emocional - próximamente disponible");
+        },
       ),
     );
   }

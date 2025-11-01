@@ -99,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen>
                       subtitle: 'Calma inmediata',
                       icon: Icons.air,
                       color: Colors.blue.shade300,
+                      isPremium: false,
                       onTap: () => _launchBreathingExercise(),
                     ),
                     _emergencyToolButton(
@@ -106,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen>
                       subtitle: '3-5 minutos',
                       icon: Icons.self_improvement,
                       color: Colors.purple.shade300,
+                      isPremium: true,
                       onTap: () => _launchMeditation(),
                     ),
                     _emergencyToolButton(
@@ -113,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen>
                       subtitle: 'Tu playlist personalizada',
                       icon: Icons.music_note,
                       color: Colors.green.shade300,
+                      isPremium: false,
                       onTap: () => _launchMusic(),
                     ),
                     _emergencyToolButton(
@@ -120,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen>
                       subtitle: 'Distrae tu mente',
                       icon: Icons.games,
                       color: Colors.orange.shade300,
+                      isPremium: true,
                       onTap: () => _launchGames(),
                     ),
                     _emergencyToolButton(
@@ -127,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen>
                       subtitle: 'IA compasiva',
                       icon: Icons.chat_bubble_outline,
                       color: Colors.cyan.shade300,
+                      isPremium: true,
                       onTap: () => _launchAIChat(),
                     ),
                     _emergencyToolButton(
@@ -134,6 +139,7 @@ class _HomeScreenState extends State<HomeScreen>
                       subtitle: 'Llama a alguien de confianza',
                       icon: Icons.phone,
                       color: Colors.red.shade300,
+                      isPremium: false,
                       onTap: () => _showEmergencyContacts(),
                     ),
                   ],
@@ -180,59 +186,94 @@ class _HomeScreenState extends State<HomeScreen>
     required String subtitle,
     required IconData icon,
     required Color color,
+    required bool isPremium,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        if (isPremium) {
+          Navigator.pop(context);
+          _showPremiumFeatureDialog(title);
+        } else {
+          onTap();
+        }
+      },
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(
+            color: isPremium ? Colors.orange.shade300 : color.withOpacity(0.3),
+            width: isPremium ? 2 : 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.2),
+              color: isPremium ? Colors.orange.withOpacity(0.2) : color.withOpacity(0.2),
               blurRadius: 10,
               offset: Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 24,
-              ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: isPremium ? Colors.grey.shade400 : color,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Icon(
+                    isPremium ? Icons.lock : icon,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: isPremium ? Colors.grey.shade600 : Colors.pink.shade700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  isPremium ? 'Solo Premium' : subtitle,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isPremium ? Colors.grey.shade500 : Colors.pink.shade500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            SizedBox(height: 12),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.pink.shade700,
+            if (isPremium)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade500,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'PREMIUM',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.pink.shade500,
-              ),
-              textAlign: TextAlign.center,
-            ),
           ],
         ),
       ),
@@ -278,6 +319,68 @@ class _HomeScreenState extends State<HomeScreen>
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Contactos de emergencia próximamente')),
+    );
+  }
+
+  void _showPremiumFeatureDialog(String featureName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.star, color: Colors.orange.shade600),
+              SizedBox(width: 8),
+              Text('Función Premium'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$featureName es una función premium.',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text('Con la suscripción Premium tendrás acceso a:'),
+              SizedBox(height: 8),
+              Text('• Meditaciones personalizadas'),
+              Text('• Chat de IA compasiva'),
+              Text('• Juegos calmantes avanzados'),
+              Text('• Análisis detallado de progreso'),
+              Text('• Alertas inteligentes'),
+              SizedBox(height: 10),
+              Text(
+                'Suscríbete para desbloquear todas las herramientas de manejo de ansiedad.',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Más tarde'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Suscripción Premium próximamente disponible'),
+                    backgroundColor: Colors.orange.shade600,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange.shade600,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Suscribirse'),
+            ),
+          ],
+        );
+      },
     );
   }
 

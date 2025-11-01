@@ -14,7 +14,7 @@ import '../../widgets/profile_avatar.dart';
 import '../../services/profile_image.dart';
 
 //Ventanas
-import 'package:convivezen/screens/auth/login_options.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -98,7 +98,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text(
           "Mi Perfil",
           style: GoogleFonts.poppins(
@@ -137,41 +140,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            user?.displayName ??
-                                appState.userProfile?.name ??
-                                "Usuario",
+                            _truncateString(
+                              user?.displayName ??
+                                  appState.userProfile?.name ??
+                                  "Usuario",
+                              20,
+                            ),
                             style: GoogleFonts.poppins(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: Colors.pink[800],
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            user?.email ?? "email@ejemplo.com",
+                            _truncateString(
+                              user?.email ?? "email@ejemplo.com",
+                              25,
+                            ),
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: Colors.grey[600],
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.pink[100],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              "Configuración completada",
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: Colors.pink[700],
-                                fontWeight: FontWeight.w500,
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.pink[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  "Perfil completo",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.pink[700],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.green.shade300),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,
+                                      size: 12,
+                                      color: Colors.green[700],
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      "GRATIS",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 10,
+                                        color: Colors.green[700],
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -183,161 +230,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 24),
 
-            // Sección 2: Herramientas de bienestar
-            Text(
-              "Herramientas de Bienestar",
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.pink[800],
-              ),
-            ),
-
+            // Sección: Personalización
+            _buildSectionTitle("Personalización"),
             const SizedBox(height: 12),
-
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 1.2,
-                  children: [
-                    _buildToolCard(
-                      title: "Mis Contactos",
-                      icon: Icons.contact_phone,
-                      color: Colors.blue,
-                      onTap: () {
-                        // Navegar a contactos de emergencia
-                      },
-                    ),
-                    _buildToolCard(
-                      title: "Respiración",
-                      icon: Icons.air,
-                      color: Colors.green,
-                      onTap: () {
-                        // Navegar a ejercicios de respiración
-                      },
-                    ),
-                    _buildToolCard(
-                      title: "Mindfulness",
-                      icon: Icons.self_improvement,
-                      color: Colors.purple,
-                      onTap: () {
-                        // Navegar a mindfulness
-                      },
-                    ),
-                    _buildToolCard(
-                      title: "Mi Música",
-                      icon: Icons.music_note,
-                      color: Colors.orange,
-                      onTap: () {
-                        // Navegar a música relajante
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            _buildOnboardingCard(),
 
             const SizedBox(height: 24),
 
-            // Sección 3: Configuración
-            Text(
-              "Configuración",
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.pink[800],
-              ),
-            ),
-
+            // Sección: Configuración
+            _buildSectionTitle("Configuración"),
             const SizedBox(height: 12),
+            _buildConfigurationSection(appState),
 
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                children: [
-                  // Notificaciones
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.notifications,
-                        color: Colors.blue[700],
-                      ),
-                    ),
-                    title: Text(
-                      "Notificaciones",
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    subtitle: Text(
-                      "Recordatorios y alertas",
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    trailing: Switch(
-                      value: true,
-                      onChanged: (value) {
-                        // Manejar cambio de notificaciones
-                      },
-                      activeColor: Colors.pink[400],
-                    ),
-                  ),
-                  Divider(height: 1),
+            const SizedBox(height: 24),
 
-                  // Privacidad
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.green[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.privacy_tip,
-                        color: Colors.green[700],
-                      ),
-                    ),
-                    title: Text(
-                      "Privacidad",
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    subtitle: Text(
-                      "Configuración de datos",
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      // Navegar a configuración de privacidad
-                    },
-                  ),
-                ],
-              ),
-            ),
+            // Sección: Suscripción
+            _buildSectionTitle("Suscripción"),
+            const SizedBox(height: 12),
+            _buildSubscriptionCard(),
+
+            const SizedBox(height: 24),
+
+            // Sección 1: Opciones de Onboarding
+            _buildSectionTitle("Configurar Onboarding"),
+            const SizedBox(height: 12),
+            _buildOnboardingCard(),
+
+            const SizedBox(height: 24),
+
+            // Sección 2: Configuración General
+            _buildSectionTitle("Configuración"),
+            const SizedBox(height: 12),
+            _buildConfigurationSection(appState),
+
+            const SizedBox(height: 24),
+
+            // Sección 3: Suscripción
+            _buildSectionTitle("Suscripción"),
+            const SizedBox(height: 12),
+            _buildSubscriptionCard(),
 
             const SizedBox(height: 24),
 
@@ -397,11 +328,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onPressed: () async {
                                 Navigator.pop(context);
                                 await FirebaseAuth.instance.signOut();
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => LoginOptions()),
-                                  (_) => false,
+                                // Simplemente mostrar snackbar en lugar de navegar
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Sesión cerrada')),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -493,11 +422,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     final user =
                                         FirebaseAuth.instance.currentUser;
                                     await user?.delete();
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => LoginOptions()),
-                                      (_) => false,
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Cuenta eliminada')),
                                     );
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -535,59 +461,453 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
-}
 
-Widget _buildToolCard({
-  required String title,
-  required IconData icon,
-  required Color color,
-  required VoidCallback onTap,
-}) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
+  // Helper method para truncar strings
+  String _truncateString(String text, int maxLength) {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return '${text.substring(0, maxLength)}...';
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.poppins(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: Colors.pink[800],
+      ),
+    );
+  }
+
+  Widget _buildOnboardingCard() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            _buildOptionTile(
+              title: "Tipos de Ansiedad",
+              subtitle: "Modifica tus tipos de ansiedad",
+              icon: Icons.psychology,
+              color: Colors.purple,
+              onTap: () => _navigateToAnxietyTypes(),
+            ),
+            const Divider(height: 1),
+            _buildOptionTile(
+              title: "Preferencias Musicales",
+              subtitle: "Actualiza tus géneros favoritos",
+              icon: Icons.music_note,
+              color: Colors.orange,
+              onTap: () => _navigateToMusicPreferences(),
+            ),
+            const Divider(height: 1),
+            _buildOptionTile(
+              title: "Hobbies e Intereses",
+              subtitle: "Cambia tus hobbies y actividades",
+              icon: Icons.sports_soccer,
+              color: Colors.green,
+              onTap: () => _navigateToHobbies(),
+            ),
+            const Divider(height: 1),
+            _buildOptionTile(
+              title: "Estilo de Ayuda",
+              subtitle: "Personaliza cómo recibes apoyo",
+              icon: Icons.support_agent,
+              color: Colors.blue,
+              onTap: () => _navigateToHelpStyle(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConfigurationSection(AppState appState) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            _buildOptionTile(
+              title: "Perfil",
+              subtitle: "Contraseña, preferencias, datos personales",
+              icon: Icons.person,
+              color: Colors.pink,
+              onTap: () => _navigateToProfileSettings(),
+              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            ),
+            const Divider(height: 1),
+            _buildSwitchTile(
+              title: "Modo Oscuro",
+              subtitle: "Cambia el tema de la aplicación",
+              icon: Icons.dark_mode,
+              color: Colors.indigo,
+              value: appState.isDarkMode,
+              onChanged: (value) => appState.toggleDarkMode(),
+            ),
+            const Divider(height: 1),
+            _buildSwitchTile(
+              title: "Notificaciones",
+              subtitle: "Alertas y recordatorios",
+              icon: Icons.notifications,
+              color: Colors.amber,
+              value: true, // TODO: Implementar estado de notificaciones
+              onChanged: (value) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Configuración de notificaciones próximamente')),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionCard() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            _buildOptionTile(
+              title: "Plan Actual: Gratis",
+              subtitle: "Toca para ver opciones de suscripción",
+              icon: Icons.card_membership,
+              color: Colors.green,
+              onTap: () => _showSubscriptionOptions(),
+              trailing: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'ACTIVO',
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    color: Colors.green.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+    Widget? trailing,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      leading: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: color, size: 24),
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.poppins(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.pink[800],
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: GoogleFonts.poppins(
+          fontSize: 12,
+          color: Colors.grey[600],
+        ),
+      ),
+      trailing: trailing ?? Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      onTap: onTap,
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required bool value,
+    required Function(bool) onChanged,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      leading: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: color, size: 24),
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.poppins(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.pink[800],
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: GoogleFonts.poppins(
+          fontSize: 12,
+          color: Colors.grey[600],
+        ),
+      ),
+      trailing: Switch(
+        value: value,
+        onChanged: onChanged,
+        activeColor: Colors.pink[400],
+      ),
+    );
+  }
+
+  // Métodos de navegación
+  void _navigateToAnxietyTypes() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Configuración de tipos de ansiedad próximamente')),
+    );
+  }
+
+  void _navigateToMusicPreferences() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Configuración de música próximamente')),
+    );
+  }
+
+  void _navigateToHobbies() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Configuración de hobbies próximamente')),
+    );
+  }
+
+  void _navigateToHelpStyle() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Configuración de estilo de ayuda próximamente')),
+    );
+  }
+
+  void _navigateToProfileSettings() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Configuración de perfil próximamente')),
+    );
+  }
+
+  void _showSubscriptionOptions() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Opciones de Suscripción',
+              style: GoogleFonts.poppins(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.pink.shade700,
+              ),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    _buildSubscriptionPlanCard('Gratis', 'Plan actual', true),
+                    SizedBox(height: 16),
+                    _buildSubscriptionPlanCard('Premium', '\$9.99/mes', false),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionPlanCard(String title, String price, bool isActive) {
+    bool isPremium = title == 'Premium';
+    
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: isPremium ? Colors.orange.shade50 : Colors.green.shade50,
+        borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
+          color: isPremium ? Colors.orange.shade300 : Colors.green.shade300,
+          width: isActive ? 3 : 1,
         ),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 24,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isPremium ? Colors.orange.shade700 : Colors.green.shade700,
+                ),
+              ),
+              if (isActive)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade600,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'ACTIVO',
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Text(
+            price,
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              color: Colors.grey.shade600,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: color,
+          SizedBox(height: 12),
+          if (isPremium) ...[
+            _buildFeatureItem('Meditaciones personalizadas'),
+            _buildFeatureItem('Chat de IA compasiva 24/7'),
+            _buildFeatureItem('Juegos calmantes avanzados'),
+            _buildFeatureItem('Análisis detallado de progreso'),
+            _buildFeatureItem('Alertas inteligentes'),
+          ] else ...[
+            _buildFeatureItem('Respiración guiada'),
+            _buildFeatureItem('Música relajante básica'),
+            _buildFeatureItem('Contactos de emergencia'),
+            _buildFeatureItem('Registro de estado emocional'),
+          ],
+          SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (isPremium && !isActive) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Suscripción Premium próximamente'),
+                      backgroundColor: Colors.orange.shade600,
+                    ),
+                  );
+                } else if (isPremium && isActive) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Cancelación de suscripción próximamente'),
+                      backgroundColor: Colors.red.shade600,
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isPremium 
+                    ? (isActive ? Colors.red.shade400 : Colors.orange.shade600)
+                    : Colors.green.shade600,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: Text(
+                isPremium 
+                    ? (isActive ? 'Cancelar Suscripción' : 'Suscribirse')
+                    : 'Plan Actual',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ),
         ],
       ),
-    ),
-  );
+    );
+  }
+
+  Widget _buildFeatureItem(String feature) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Icon(Icons.check, color: Colors.green.shade600, size: 16),
+          SizedBox(width: 8),
+          Text(
+            feature,
+            style: GoogleFonts.poppins(fontSize: 13),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -61,18 +61,10 @@ class FirestoreService {
   Future<void> saveUserPreferences({
     required String uid,
     String? gender,
-    List<String>? habits,
-    List<String>? sports,
-    List<String>? exerciseTypes,
-    List<String>? trainingDays,
   }) async {
     Map<String, dynamic> data = {};
 
     if (gender != null) data['gender'] = gender;
-    if (habits != null) data['habits'] = habits;
-    if (sports != null) data['sports'] = sports;
-    if (exerciseTypes != null) data['excersice_types'] = exerciseTypes;
-    if (trainingDays != null) data['training_days'] = trainingDays;
 
     await updateUser(uid, data);
   }
