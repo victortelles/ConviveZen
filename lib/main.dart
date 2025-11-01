@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:convivezen/firebase_options.dart';
-import 'package:convivezen/models/user_preferences.dart';
-import 'package:convivezen/screens/gender_selection.dart';
-import 'package:convivezen/screens/login_options.dart';
-import 'package:convivezen/screens/home.dart';
-import 'package:convivezen/screens/login.dart';
-import 'package:convivezen/screens/events.dart';
+import 'package:convivezen/screens/auth/login_options.dart';
+import 'package:convivezen/screens/home/home.dart';
+import 'package:convivezen/screens/auth/login.dart';
+import 'package:convivezen/screens/onboarding/onboarding_flow.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import './providers/app_state.dart';
@@ -66,10 +64,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginOptions(),
         '/login': (context) => LoginScreen(),
         '/home': (context) => HomeScreen(),
-        //Añadir gender_selection
-        '/gender_selection': (context) =>
-            GenderSelection(userPreferences: UserPreferences()),
-        '/explore': (context) => ExploreScreen(),
+        '/onboarding': (context) => OnboardingFlow(),
       },
     );
   }

@@ -181,18 +181,7 @@ class AppState with ChangeNotifier {
 
       if (userDoc.exists && userDoc.data() != null) {
         Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
-        return UserPreferences(
-          gender: data?['gender'] as String?,
-          selectedHabits:
-              (data?['habits'] as List<dynamic>?)?.cast<String>() ?? [],
-          selectedSports:
-              (data?['sports'] as List<dynamic>?)?.cast<String>() ?? [],
-          selectedExercises:
-              (data?['excersice_types'] as List<dynamic>?)?.cast<String>() ??
-                  [],
-          selectedDays:
-              (data?['training_days'] as List<dynamic>?)?.cast<String>() ?? [],
-        );
+        return UserPreferences.fromMap(data ?? {});
       }
       return UserPreferences(); //Retorna una instancia por defecto si no existe
     } catch (e) {
@@ -417,6 +406,28 @@ class AppState with ChangeNotifier {
       }
     } catch (e) {
       print("Error eliminando el hábito: $e");
+    }
+  }
+
+  // Guardar preferencias de usuario en Firestore
+  Future<void> saveUserPreferencesToFirestore(UserPreferences preferences) async {
+    if (_currentUser == null) return;
+
+    setLoading(true);
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .collection('preferences')
+          .doc('main')
+          .set(preferences.toMap());
+      
+      print('User preferences saved successfully');
+    } catch (e) {
+      print('Error saving user preferences: $e');
+      throw e;
+    } finally {
+      setLoading(false);
     }
   }
 

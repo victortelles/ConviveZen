@@ -31,14 +31,10 @@ class _HabitsListState extends State<HabitsList> {
       final userCreatedHabits = await appState.getUserCreatedHabits();
 
       // Validar que los datos sean del tipo esperado
-      if (userCreatedHabits is List<Map<String, dynamic>>) {
-        setState(() {
-          _createdHabits = userCreatedHabits;
-          print("Habits: $_createdHabits");
-        });
-      } else {
-        throw Exception("Los datos de hábitos no son del tipo esperado.");
-      }
+      setState(() {
+        _createdHabits = userCreatedHabits;
+        print("Habits: $_createdHabits");
+      });
     } catch (e) {
       print('Error loading habits: $e');
       if (mounted) {

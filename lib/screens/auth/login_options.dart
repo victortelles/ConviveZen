@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:convivezen/services/auth.dart';
-import 'package:flutter/services.dart'; // Para cargar el PDF
-import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 //Widgets
 import 'package:convivezen/widgets/animated_logo.dart';
-import 'package:convivezen/widgets/pdf_viewer_widget.dart';
 //Ventanas
-import 'package:convivezen/screens/login.dart';
-import 'package:convivezen/screens/register.dart';
+import 'login.dart';
+import 'register.dart';
 
 class LoginOptions extends StatefulWidget {
   const LoginOptions({super.key});
@@ -283,7 +278,15 @@ class TermsAndConditionsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Términos y Condiciones'),
       ),
-      body: PDFViewerWidget(assetPath: 'assets/pdf/TERMS_AND_CONDITIONS.pdf'),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Términos y Condiciones\n\nPor favor lee nuestros términos y condiciones antes de continuar.\n\n[Contenido de términos aquí]',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/user_preferences.dart';
 import '../providers/app_state.dart';
-import 'home.dart';
+import 'home/home.dart';
 
 class Summary extends StatefulWidget {
   final UserPreferences userPreferences;
@@ -42,28 +42,26 @@ class _SummaryState extends State<Summary> {
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   SizedBox(height: 20),
-                  _buildPreferenceSection('Género',
-                      widget.userPreferences.gender ?? 'No especificado'),
+                  _buildPreferenceSection('Estilo de ayuda',
+                      widget.userPreferences.helpStyle),
                   _buildPreferenceSection(
-                      'Hábitos seleccionados',
-                      widget.userPreferences.selectedHabits.isEmpty
+                      'Hobbies seleccionados',
+                      widget.userPreferences.hobbies.isEmpty
                           ? 'Ninguno seleccionado'
-                          : widget.userPreferences.selectedHabits.join(', ')),
+                          : widget.userPreferences.hobbies.join(', ')),
                   _buildPreferenceSection(
-                      'Deportes',
-                      widget.userPreferences.selectedSports.isEmpty
+                      'Géneros musicales',
+                      widget.userPreferences.musicGenres.isEmpty
                           ? 'Ninguno seleccionado'
-                          : widget.userPreferences.selectedSports.join(', ')),
+                          : widget.userPreferences.musicGenres.join(', ')),
                   _buildPreferenceSection(
-                      'Tipos de ejercicios',
-                      widget.userPreferences.selectedExercises.isEmpty
-                          ? 'Ninguno seleccionado'
-                          : widget.userPreferences.selectedExercises.join(', ')),
+                      'Herramientas favoritas',
+                      widget.userPreferences.favoriteTools.isEmpty
+                          ? 'Ninguna seleccionada'
+                          : widget.userPreferences.favoriteTools.join(', ')),
                   _buildPreferenceSection(
-                      'Días de entrenamiento',
-                      widget.userPreferences.selectedDays.isEmpty
-                          ? 'Ninguno seleccionado'
-                          : widget.userPreferences.selectedDays.join(', ')),
+                      'Herramienta principal',
+                      widget.userPreferences.primaryTool),
                   SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
@@ -116,13 +114,7 @@ class _SummaryState extends State<Summary> {
 
     try {
       // Guardar todas las preferencias del usuario en Firestore
-      await Provider.of<AppState>(context, listen: false).updateUserPreferences(
-        gender: widget.userPreferences.gender,
-        habits: widget.userPreferences.selectedHabits,
-        sports: widget.userPreferences.selectedSports,
-        exerciseTypes: widget.userPreferences.selectedExercises,
-        trainingDays: widget.userPreferences.selectedDays,
-      );
+      await Provider.of<AppState>(context, listen: false).updateUserPreferences();
 
       // Navegar a la pantalla principal
       Navigator.of(context).pushAndRemoveUntil(

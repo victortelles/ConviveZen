@@ -22,7 +22,8 @@ class HomeHeader extends StatelessWidget {
     }
 
     final greeting = 'Hola, $displayName';
-    double rotationAngle = 0;
+    // Color backgroundColor = appState.isDarkMode ? Colors.black : Colors.white;
+    // Color textColor = appState.isDarkMode ? Colors.white : Colors.black;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -32,7 +33,7 @@ class HomeHeader extends StatelessWidget {
           tween: Tween<double>(begin: -10, end: 10),
           duration: const Duration(milliseconds: 300),
           builder: (context, value, child) {
-            rotationAngle = value;
+            // double rotationAngle = value;
             return Transform.rotate(
               angle: value * (3.141592653589793 / 180),
               child: Icon(Icons.waving_hand,

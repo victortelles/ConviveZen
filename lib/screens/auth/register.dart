@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:convivezen/models/user_preferences.dart';
-import 'package:convivezen/screens/gender_selection.dart';
+import 'package:convivezen/screens/onboarding/onboarding_flow.dart';
 import 'package:convivezen/services/auth.dart';
-import 'package:convivezen/widgets/register_forms.dart';
+import 'widgets/register_forms.dart';
 import 'package:intl/intl.dart';
 
 class Register extends StatefulWidget {
@@ -79,7 +78,6 @@ class _RegisterState extends State<Register> {
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
-      birthdate: _selectedDate!,
       context: context
     );
 
@@ -95,7 +93,7 @@ class _RegisterState extends State<Register> {
 
     //Navegacion tras el registro exitoso
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => GenderSelection(userPreferences: UserPreferences())));
+        builder: (_) => OnboardingFlow()));
   }
 
   @override

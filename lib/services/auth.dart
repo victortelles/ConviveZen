@@ -56,12 +56,15 @@ class AuthService {
             email: user.email ?? '',
             name: user.displayName ?? 'Usuario',
             profilePic: user.photoURL,
-            createdAt: DateTime.now(),
+            authProvider: 'google',
+            age: 18, // Default, will be updated in onboarding
+            anxietyType: 'generalized', // Default, will be updated in onboarding
+            personalityType: 'ambivert', // Default, will be updated in onboarding
           );
 
           await Provider.of<AppState>(context, listen: false)
               .saveUserToFirestore(newUser);
-          Navigator.of(context).pushReplacementNamed('/gender_selection');
+          Navigator.of(context).pushReplacementNamed('/onboarding');
         } else {
           Navigator.of(context).pushReplacementNamed('/home');
         }
@@ -77,12 +80,11 @@ class AuthService {
     }
   }
 
-  //Apartado de registrar usuario
+  //Register with email - simplified for new flow
   Future<String?> registerWithEmail({
     required String name,
     required String email,
     required String password,
-    required DateTime birthdate,
     required BuildContext context,
   }) async {
     try {
@@ -97,16 +99,17 @@ class AuthService {
         uid: userCredential.user!.uid,
         email: email,
         name: name,
-        birthdate: birthdate,
-        role: 'user',
-        createdAt: DateTime.now(),
+        authProvider: 'email',
+        age: 18, // Default, will be updated in onboarding
+        anxietyType: 'generalized', // Default, will be updated in onboarding
+        personalityType: 'ambivert', // Default, will be updated in onboarding
       );
 
-      //Guardar en Firestore
+      // Save to Firestore
       await Provider.of<AppState>(context, listen: false)
           .saveUserToFirestore(newUser);
 
-      return null; // sin error
+      return null; // Success - no error
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'email-already-in-use':

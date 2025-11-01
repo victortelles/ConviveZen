@@ -1,103 +1,115 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//Modelo de usuarios para bases de datos
+// Main user profile model with anxiety-specific data
 class UserModel {
   final String uid;
   final String email;
   final String name;
-  final String? gender;
-  final DateTime? birthdate;
-  final GeoPoint? location;
-  final List<String> favorites;
-  final List<String> habits;
-  final List<String> sports;
-  final List<String> exerciseTypes;
-  final List<String> trainingDays;
   final String? profilePic;
   final DateTime createdAt;
-  final String role;
+  final String authProvider; // 'email', 'google', etc.
+  final bool isActive;
+
+  // Anxiety-specific data
+  final int age;
+  final String anxietyType; // 'social', 'generalized', 'panic', 'specific_phobia', 'mixed'
+  final int anxietyLevel; // 1-10 scale
+  final String personalityType; // 'introvert', 'extrovert', 'ambivert'
+  final List<String> triggers; // Main anxiety triggers
+  final bool hasSubscription;
+  final DateTime? subscriptionExpiry;
 
   UserModel({
     required this.uid,
     required this.email,
     required this.name,
-    this.gender,
-    this.birthdate,
-    this.location,
-    this.favorites = const [],
-    this.habits = const [],
-    this.sports = const [],
-    this.exerciseTypes = const [],
-    this.trainingDays = const [],
     this.profilePic,
-    this.role = 'user',
+    required this.authProvider,
+    this.isActive = true,
     DateTime? createdAt,
-  }) : this.createdAt = createdAt ?? DateTime.now();
+    required this.age,
+    required this.anxietyType,
+    this.anxietyLevel = 5,
+    required this.personalityType,
+    List<String>? triggers,
+    this.hasSubscription = false,
+    this.subscriptionExpiry,
+  })  : this.createdAt = createdAt ?? DateTime.now(),
+        this.triggers = triggers ?? [];
 
-  // Convertir de Map a UserModel
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       uid: map['uid'] ?? '',
       email: map['email'] ?? '',
       name: map['name'] ?? '',
-      gender: map['gender'],
-      birthdate: (map['birthdate'] as Timestamp?)?.toDate(),
-      location: map['location'] as GeoPoint?,
-      favorites: List<String>.from(map['favorites'] ?? []),
-      habits: List<String>.from(map['habits'] ?? []),
-      sports: List<String>.from(map['sports'] ?? []),
-      exerciseTypes: List<String>.from(map['excersice_types'] ?? []),
-      trainingDays: List<String>.from(map['training_days'] ?? []),
-      profilePic: map['profile_pic'],
-      role: map['role'] ?? 'user',
-      createdAt: (map['created_at'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      profilePic: map['profilePic'],
+      authProvider: map['authProvider'] ?? 'email',
+      isActive: map['isActive'] ?? true,
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] is Timestamp
+              ? (map['createdAt'] as Timestamp).toDate()
+              : DateTime.parse(map['createdAt']))
+          : DateTime.now(),
+      age: map['age'] ?? 18,
+      anxietyType: map['anxietyType'] ?? 'generalized',
+      anxietyLevel: map['anxietyLevel'] ?? 5,
+      personalityType: map['personalityType'] ?? 'ambivert',
+      triggers: List<String>.from(map['triggers'] ?? []),
+      hasSubscription: map['hasSubscription'] ?? false,
+      subscriptionExpiry: map['subscriptionExpiry'] != null
+          ? (map['subscriptionExpiry'] is Timestamp
+              ? (map['subscriptionExpiry'] as Timestamp).toDate()
+              : DateTime.parse(map['subscriptionExpiry']))
+          : null,
     );
   }
 
-  // Convertir UserModel a Map
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
       'email': email,
       'name': name,
-      'gender': gender,
-      'birthdate': birthdate != null ? Timestamp.fromDate(birthdate!) : null,
-      'location': location,
-      'favorites': favorites,
-      'habits': habits,
-      'sports': sports,
-      'excersice_types': exerciseTypes,
-      'training_days': trainingDays,
-      'profile_pic': profilePic,
-      'role': role,
-      'created_at': Timestamp.fromDate(createdAt),
+      'profilePic': profilePic,
+      'authProvider': authProvider,
+      'isActive': isActive,
+      'createdAt': createdAt.toIso8601String(),
+      'age': age,
+      'anxietyType': anxietyType,
+      'anxietyLevel': anxietyLevel,
+      'personalityType': personalityType,
+      'triggers': triggers,
+      'hasSubscription': hasSubscription,
+      'subscriptionExpiry': subscriptionExpiry?.toIso8601String(),
     };
   }
 
-  // Crear un nuevo usuario con datos actualizados
   UserModel copyWith({
-    String? gender,
-    List<String>? habits,
-    List<String>? sports,
-    List<String>? exerciseTypes,
-    List<String>? trainingDays,
+    String? name,
     String? profilePic,
+    bool? isActive,
+    int? age,
+    String? anxietyType,
+    int? anxietyLevel,
+    String? personalityType,
+    List<String>? triggers,
+    bool? hasSubscription,
+    DateTime? subscriptionExpiry,
   }) {
     return UserModel(
       uid: this.uid,
       email: this.email,
-      name: this.name,
-      gender: gender ?? this.gender,
-      birthdate: this.birthdate,
-      location: this.location,
-      favorites: this.favorites,
-      habits: habits ?? this.habits,
-      sports: sports ?? this.sports,
-      exerciseTypes: exerciseTypes ?? this.exerciseTypes,
-      trainingDays: trainingDays ?? this.trainingDays,
+      name: name ?? this.name,
       profilePic: profilePic ?? this.profilePic,
-      role: this.role,
+      authProvider: this.authProvider,
+      isActive: isActive ?? this.isActive,
       createdAt: this.createdAt,
+      age: age ?? this.age,
+      anxietyType: anxietyType ?? this.anxietyType,
+      anxietyLevel: anxietyLevel ?? this.anxietyLevel,
+      personalityType: personalityType ?? this.personalityType,
+      triggers: triggers ?? this.triggers,
+      hasSubscription: hasSubscription ?? this.hasSubscription,
+      subscriptionExpiry: subscriptionExpiry ?? this.subscriptionExpiry,
     );
   }
 }

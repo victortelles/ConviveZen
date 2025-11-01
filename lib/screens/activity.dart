@@ -5,10 +5,8 @@ import 'package:provider/provider.dart';
 import '../widgets/nav_bar.dart';
 import '../providers/app_state.dart';
 
-import 'package:convivezen/screens/profile.dart';
-import 'package:convivezen/screens/home.dart';
-import 'package:convivezen/screens/community.dart';
-import 'package:convivezen/screens/events.dart';
+import 'package:convivezen/screens/profile/profile.dart';
+import 'package:convivezen/screens/home/home.dart';
 
 class ActivityScreen extends StatefulWidget {
   @override
@@ -19,7 +17,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
   int _selectedIndex = 3;
 
   void _onItemTapped(int index) {
-    var appState = Provider.of<AppState>(context, listen: false);
+    // var appState = Provider.of<AppState>(context, listen: false);
 
     if (index == 0) {
       Navigator.push(
@@ -27,17 +25,9 @@ class _ActivityScreenState extends State<ActivityScreen> {
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
     } else if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CommunityScreen()),
-      );
+      _showAlert("Función de comunidad temporalmente deshabilitada");
     } else if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ExploreScreen(),
-        ),
-      );
+      _showAlert("Función de explorar temporalmente deshabilitada");
     } else if (index == 4) {
       Navigator.push(
         context,

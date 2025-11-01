@@ -54,12 +54,8 @@ class _HabitsDetailState extends State<HabitsDetail> {
   Future<void> _savePreferences() async {
     try {
       final appState = Provider.of<AppState>(context, listen: false);
-      // Obtener las preferencias de los usuarios
-      final userPreferences = await appState.getUserPreferences();
-      // Actualizar los habitos seleccionados
-      userPreferences.selectedHabits = _selectedHabits;
       // Guardar las preferencias seleccionadas
-      await appState.updateUserPreferences(habits: userPreferences.selectedHabits);
+      await appState.updateUserPreferences(habits: _selectedHabits);
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:convivezen/screens/register.dart';
-import '../screens/gender_selection.dart';
-import '../services/firebase.dart';
-import '../models/user_preferences.dart';
-import '../widgets/lost_password.dart';
+import 'package:convivezen/screens/auth/register.dart';
+import 'package:convivezen/screens/onboarding/onboarding_flow.dart';
+import '../../services/firebase.dart';
+import 'widgets/lost_password.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,9 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Continuar con el flujo de personalización
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => GenderSelection(
-              userPreferences: UserPreferences(),
-            ),
+            builder: (context) => OnboardingFlow(),
           ),
         );
       }
