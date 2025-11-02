@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class OnboardingState extends ChangeNotifier {
+  // Definir atributos
   // Current step tracking
   int _currentStep = 0;
   final int totalSteps = 6;
@@ -26,7 +27,7 @@ class OnboardingState extends ChangeNotifier {
   bool get canGoNext => _currentStep < totalSteps - 1;
   double get progress => (_currentStep + 1) / totalSteps;
 
-  // Navigation methods
+  // Navegar entre pasos
   void nextStep() {
     if (canGoNext) {
       _currentStep++;
@@ -34,6 +35,7 @@ class OnboardingState extends ChangeNotifier {
     }
   }
 
+  // Navegar al paso anterior
   void previousStep() {
     if (canGoBack) {
       _currentStep--;
@@ -41,6 +43,7 @@ class OnboardingState extends ChangeNotifier {
     }
   }
 
+  // Ir a un paso específico
   void goToStep(int step) {
     if (step >= 0 && step < totalSteps) {
       _currentStep = step;
@@ -106,6 +109,7 @@ class OnboardingState extends ChangeNotifier {
 
   bool get isCurrentStepValid => isStepValid(_currentStep);
 
+  // Convertir el modelo en mapa para Firestore
   Map<String, dynamic> toMap() {
     return {
       'anxietyTypes': _anxietyTypes,

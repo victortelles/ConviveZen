@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Modelo para registro de actividades de intervención en ansiedad
 class AnxietySession {
+  // Definicion de atributos
   final String id;
   final String userId;
-  final String type; // 'breathing', 'meditation', 'exercise', 'journal', 'emergency'
+  final String
+      type; // 'breathing', 'meditation', 'exercise', 'journal', 'emergency'
   final String title;
   final String? description;
   final int duration; // en minutos
@@ -17,6 +19,7 @@ class AnxietySession {
   final bool isCompleted;
   final String? notes; // Notas del usuario
 
+  // Constructor
   AnxietySession({
     required this.id,
     required this.userId,
@@ -32,9 +35,9 @@ class AnxietySession {
     this.endTime,
     this.isCompleted = false,
     this.notes,
-  }) : techniques = techniques ?? [],
-       sessionData = sessionData ?? {},
-       startTime = startTime ?? DateTime.now();
+  })  : techniques = techniques ?? [],
+        sessionData = sessionData ?? {},
+        startTime = startTime ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
     return {
@@ -67,13 +70,18 @@ class AnxietySession {
       anxietyAfter: map['anxietyAfter'] ?? 5,
       techniques: List<String>.from(map['techniques'] ?? []),
       sessionData: Map<String, dynamic>.from(map['sessionData'] ?? {}),
-      startTime: map['startTime'] != null ? (map['startTime'] as Timestamp).toDate() : DateTime.now(),
-      endTime: map['endTime'] != null ? (map['endTime'] as Timestamp).toDate() : null,
+      startTime: map['startTime'] != null
+          ? (map['startTime'] as Timestamp).toDate()
+          : DateTime.now(),
+      endTime: map['endTime'] != null
+          ? (map['endTime'] as Timestamp).toDate()
+          : null,
       isCompleted: map['isCompleted'] ?? false,
       notes: map['notes'],
     );
   }
 
+  // Clonar y actualizar campos específicos
   AnxietySession copyWith({
     String? type,
     String? title,
@@ -113,7 +121,7 @@ class AnxietySession {
   }) {
     final now = DateTime.now();
     final sessionDuration = now.difference(startTime).inMinutes;
-    
+
     Map<String, dynamic> updatedSessionData = Map.from(sessionData);
     if (additionalData != null) {
       updatedSessionData.addAll(additionalData);
@@ -131,7 +139,7 @@ class AnxietySession {
 
   // Calcular mejora en ansiedad
   int get anxietyImprovement => anxietyBefore - anxietyAfter;
-  
+
   // Verificar si la sesión fue efectiva (redujo ansiedad)
   bool get wasEffective => anxietyImprovement > 0;
 }
@@ -179,7 +187,9 @@ class AnxietyAssessment {
       responses: Map<String, dynamic>.from(map['responses'] ?? {}),
       score: map['score'] ?? 0,
       severity: map['severity'] ?? 'minimal',
-      completedAt: map['completedAt'] != null ? (map['completedAt'] as Timestamp).toDate() : DateTime.now(),
+      completedAt: map['completedAt'] != null
+          ? (map['completedAt'] as Timestamp).toDate()
+          : DateTime.now(),
       recommendations: map['recommendations'],
     );
   }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Emergency contact model for trusted people to notify during crisis
 class UserContact {
+  // Definicion de atributos
   final String id;
   final String userId;
   final String name;
@@ -14,6 +15,7 @@ class UserContact {
   final DateTime createdAt;
   final DateTime? lastContacted;
 
+  // Constructor
   UserContact({
     required this.id,
     required this.userId,
@@ -28,6 +30,7 @@ class UserContact {
     this.lastContacted,
   }) : this.createdAt = createdAt ?? DateTime.now();
 
+  // Metodo Factory para crear el modelo desde un mapa de Firestore
   factory UserContact.fromMap(Map<String, dynamic> map) {
     return UserContact(
       id: map['id'] ?? '',
@@ -52,6 +55,7 @@ class UserContact {
     );
   }
 
+  // Convertir el modelo en mapa para Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -68,6 +72,7 @@ class UserContact {
     };
   }
 
+  // Método para clonar y actualizar campos específicos
   UserContact copyWith({
     String? name,
     String? relationship,

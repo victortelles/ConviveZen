@@ -61,57 +61,8 @@ flutter run -d <device_id>       # Ejecuta en el dispositivo especificado
 
 ```bash
     ├── lib/
-    │   ├── firebase_options.dart
-    │   ├── main.dart
-    │   ├── data/
-    │   │   └── personalization_data.dart
-    │   ├── models/
-    │   │   ├── user.dart
-    │   │   └── user_preferences.dart
-    │   ├── providers/
-    │   │   └── app_state.dart
-    │   ├── screens/
-    │   │   ├── activity.dart
-    │   │   ├── community.dart
-    │   │   ├── days_detail.dart
-    │   │   ├── days_selection.dart
-    │   │   ├── exercises_detail.dart
-    │   │   ├── exercises_selection.dart
-    │   │   ├── gender_selection.dart
-    │   │   ├── habits_detail.dart
-    │   │   ├── habits_selection.dart
-    │   │   ├── home.dart
-    │   │   ├── login.dart
-    │   │   ├── login_options.dart
-    │   │   ├── profile.dart
-    │   │   ├── register.dart
-    │   │   ├── settings.dart
-    │   │   ├── sport_detail.dart
-    │   │   ├── sport_selection.dart
-    │   │   └── summary.dart
-    │   ├── services/
-    │   │   ├── auth.dart
-    │   │   ├── firebase.dart
-    │   │   └── profile_image.dart
-    │   └── widgets/
-    │       ├── animated_logo.dart
-    │       ├── community_card.dart
-    │       ├── habits_list.dart
-    │       ├── habits_progress_card.dart
-    │       ├── home_header.dart
-    │       ├── horizontal_date_selector.dart
-    │       ├── nav_bar.dart
-    │       ├── option_card.dart
-    │       ├── personalization_page.dart
-    │       ├── profile_avatar.dart
-    │       ├── profile_personalization.dart
-    │       ├── register_forms.dart
-    │       └── settings_list.dart
 ```
 
-# convivezen
-
-A new Flutter project.
 
 ## Getting Started
 

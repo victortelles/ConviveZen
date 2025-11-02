@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Crisis log model to track emergency button usage and outcomes
 class CrisisLog {
+  // Definicion de atributos
   final String id;
   final String userId;
   final DateTime startTime;
@@ -17,6 +18,7 @@ class CrisisLog {
   final bool contactedEmergency; // Si se notificaron contactos de emergencia
   final Map<String, dynamic> metadata; // Additional session data
 
+  // Constructor
   CrisisLog({
     required this.id,
     required this.userId,
@@ -36,6 +38,7 @@ class CrisisLog {
         this.toolsUsed = toolsUsed ?? [],
         this.metadata = metadata ?? {};
 
+  // Metodo Factory para crear el modelo desde un mapa de Firestore
   factory CrisisLog.fromMap(Map<String, dynamic> map) {
     return CrisisLog(
       id: map['id'] ?? '',
@@ -63,6 +66,7 @@ class CrisisLog {
     );
   }
 
+  // Convertir el modelo en mapa para Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -82,6 +86,7 @@ class CrisisLog {
     };
   }
 
+  // Metodo para clonar y actualizar
   CrisisLog copyWith({
     DateTime? endTime,
     int? anxietyLevelAfter,
@@ -111,7 +116,7 @@ class CrisisLog {
     );
   }
 
-  // Complete the crisis session
+  // Completar la sesión de crisis
   CrisisLog completeSession({
     required int anxietyLevelAfter,
     String? primaryToolUsed,
@@ -138,7 +143,7 @@ class CrisisLog {
     );
   }
 
-  // Add a tool to the used tools list
+  // Agregar una herramienta a la lista de herramientas utilizadas
   CrisisLog addToolUsed(String toolType) {
     final newToolsUsed = List<String>.from(toolsUsed);
     if (!newToolsUsed.contains(toolType)) {
@@ -147,19 +152,19 @@ class CrisisLog {
     return copyWith(toolsUsed: newToolsUsed);
   }
 
-  // Calculate improvement in anxiety level
+  // Calcular la mejora en el nivel de ansiedad
   int? get anxietyImprovement {
     if (anxietyLevelAfter == null) return null;
     return anxietyLevelBefore - anxietyLevelAfter!;
   }
 
-  // Check if the session was effective
+  // Checar si la sesión fue efectiva
   bool get wasEffective {
     final improvement = anxietyImprovement;
     return improvement != null && improvement > 0;
   }
 
-  // Get session status
+  // Obtener el estado de la sesión
   String get status {
     if (endTime == null) return 'active';
     if (wasEffective) return 'effective';
@@ -167,7 +172,7 @@ class CrisisLog {
     return 'completed';
   }
 
-  // Common trigger types
+  // Tipos de desencadenantes comunes
   static const List<String> commonTriggers = [
     'social_situation',
     'work_stress',

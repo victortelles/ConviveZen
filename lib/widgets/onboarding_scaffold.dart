@@ -139,6 +139,8 @@ class OnboardingListItem extends StatelessWidget {
   final String? description;
   final bool isSelected;
   final VoidCallback onTap;
+  final Color? primaryColor; // Color principal para personalización
+  final Color? iconColor; // Color específico del icono
 
   const OnboardingListItem({
     Key? key,
@@ -147,10 +149,18 @@ class OnboardingListItem extends StatelessWidget {
     this.description,
     required this.isSelected,
     required this.onTap,
+    this.primaryColor,
+    this.iconColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Usar colores personalizados o defaults
+    final MaterialColor mainColor = primaryColor is MaterialColor 
+        ? primaryColor as MaterialColor 
+        : Colors.pink;
+    final Color itemIconColor = iconColor ?? mainColor;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: GestureDetector(
@@ -158,24 +168,31 @@ class OnboardingListItem extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.pink.shade100 : Colors.white,
+            color: isSelected ? mainColor.shade100 : Colors.white,
             border: Border.all(
-              color: isSelected ? Colors.pink.shade400 : Colors.pink.shade200,
+              color: isSelected ? mainColor.shade300 : Colors.grey.shade300,
               width: 2,
             ),
             borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: isSelected ? mainColor.shade200.withOpacity(0.3) : Colors.grey.shade200,
+                blurRadius: isSelected ? 6 : 4,
+                offset: Offset(0, isSelected ? 3 : 2),
+              ),
+            ],
           ),
           child: Row(
             children: [
               Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.pink.shade400 : Colors.pink.shade100,
+                  color: isSelected ? itemIconColor : itemIconColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   icon,
-                  color: isSelected ? Colors.white : Colors.pink.shade700,
+                  color: isSelected ? Colors.white : itemIconColor,
                   size: 24,
                 ),
               ),
@@ -189,7 +206,7 @@ class OnboardingListItem extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.pink.shade700,
+                        color: mainColor.shade700,
                       ),
                     ),
                     if (description != null) ...[
@@ -198,7 +215,7 @@ class OnboardingListItem extends StatelessWidget {
                         description!,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.pink.shade600,
+                          color: Colors.grey.shade600, // Texto descripción en gris
                         ),
                       ),
                     ],
@@ -208,7 +225,7 @@ class OnboardingListItem extends StatelessWidget {
               if (isSelected)
                 Icon(
                   Icons.check_circle,
-                  color: Colors.pink.shade400,
+                  color: mainColor.shade500,
                   size: 24,
                 ),
             ],

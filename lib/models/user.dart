@@ -1,35 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Main user profile model with anxiety-specific data
+// Perfil de usuario main con datos específicos de ansiedad
 class UserModel {
+  // Definir atributos
   final String uid;
   final String email;
   final String name;
   final String? profilePic;
   final DateTime createdAt;
-  final String authProvider; // 'email', 'google', etc.
+  final String authProvider;  // 'email', 'google', etc.
   final bool isActive;
-  final bool isFirstTime; // Flag to check if user needs onboarding
+  final bool isFirstTime;     // Bandera para verificar si el usuario necesita onboarding
+  final DateTime? birthdate;
 
-  // Basic user data - required for initial registration
-  final DateTime? birthdate; // Used to calculate age
-  
-  // Anxiety-specific data - filled during onboarding
-  final List<String> anxietyTypes; // Multiple anxiety types can be selected
-  final int? anxietyLevel; // 1-10 scale
-  final String? personalityType; // 'introvert', 'extrovert', 'ambivert'
-  final List<String> triggers; // Main anxiety triggers
-  final bool hasSubscription;
+  // Datos específicos de ansiedad - Registro durante el onboarding
+  final List<String> anxietyTypes;  // tipos de ansiedad
+  final int? anxietyLevel;          // Escala de 1-10
+  final String? personalityType;    // 'introvert', 'extrovert', 'ambivert'
+  final List<String> triggers;      // Principales desencadenantes de ansiedad
+  final bool hasSubscription;       // Estado de suscripción (default = false (free))
   final DateTime? subscriptionExpiry;
 
+  //Constructor
   UserModel({
-    required this.uid,
+    required this.uid,              // ID de referencia del usuario
     required this.email,
     required this.name,
     this.profilePic,
     required this.authProvider,
     this.isActive = true,
-    this.isFirstTime = true, // Default to true for new users
+    this.isFirstTime = true,        // Default to true for new users
     DateTime? createdAt,
     this.birthdate,
     List<String>? anxietyTypes,
@@ -42,18 +42,19 @@ class UserModel {
         this.anxietyTypes = anxietyTypes ?? [],
         this.triggers = triggers ?? [];
 
-  // Helper method to calculate age from birthdate
+  // Helper | Metodo para calcular la edad base la fecha
   int? get age {
     if (birthdate == null) return null;
     final now = DateTime.now();
     int age = now.year - birthdate!.year;
-    if (now.month < birthdate!.month || 
+    if (now.month < birthdate!.month ||
         (now.month == birthdate!.month && now.day < birthdate!.day)) {
       age--;
     }
     return age;
   }
 
+  // Metodo Factory para crear el modelo desde un mapa de Firestore
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       uid: map['uid'] ?? '',
@@ -86,6 +87,7 @@ class UserModel {
     );
   }
 
+  // Convertir el modelo en mapa para Firestore
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -106,6 +108,7 @@ class UserModel {
     };
   }
 
+  // Método para clonar y actualizar campos específicos
   UserModel copyWith({
     String? name,
     String? profilePic,

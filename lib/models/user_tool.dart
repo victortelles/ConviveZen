@@ -2,19 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Custom tool configuration model for personalized emergency tools
 class UserTool {
+  // Definicion de atributos
   final String id;
   final String userId;
   final String type; // 'music', 'game', 'breathing', 'meditation', 'affirmation', 'chat'
-  final String name; // Custom name for the tool
+  final String name; // Nombre personalizado para herramienta
   final String? description;
-  final Map<String, dynamic> configuration; // Tool-specific settings
+  final Map<String, dynamic> configuration; // configuracion especifica de la herramienta
   final bool isActive;
-  final bool isDefault; // If it's a system default tool
-  final int priority; // Order in emergency menu
+  final bool isDefault; // Si es una herramienta predeterminada del sistema
+  final int priority; // Orden en el menu de emergencia
   final DateTime createdAt;
   final DateTime? lastUsed;
   final int usageCount;
 
+  // Constructor
   UserTool({
     required this.id,
     required this.userId,
@@ -31,6 +33,7 @@ class UserTool {
   })  : this.configuration = configuration ?? {},
         this.createdAt = createdAt ?? DateTime.now();
 
+  // Metodo Factory para crear el modelo desde un mapa de Firestore
   factory UserTool.fromMap(Map<String, dynamic> map) {
     return UserTool(
       id: map['id'] ?? '',

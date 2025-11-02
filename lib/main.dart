@@ -50,21 +50,43 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ConviveZen',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      //Inicializar ruta
-      initialRoute: '/',
-      //Rutas
-      routes: {
-        '/': (context) => LoginOptions(),
-        '/login': (context) => LoginScreen(),
-        '/home': (context) => HomeScreen(),
-        '/onboarding': (context) => OnboardingFlow(),
+    return Consumer<AppState>(
+      builder: (context, appState, child) {
+        // Pantalla principal de la aplicación
+        return MaterialApp(
+          title: 'ConviveZen',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.pink,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: Colors.pink[50],
+          ),
+          // Tema oscuro
+          darkTheme: ThemeData(
+            primarySwatch: Colors.pink,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: Colors.grey[900],
+            appBarTheme: AppBarTheme(
+              backgroundColor: Colors.grey[850],
+              foregroundColor: Colors.white,
+            ),
+            cardTheme: CardTheme(
+              color: Colors.grey[800],
+            ),
+          ),
+          themeMode: appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          //Inicializar ruta
+          initialRoute: '/',
+          //Rutas
+          routes: {
+            '/': (context) => LoginOptions(),
+            '/login': (context) => LoginScreen(),
+            '/home': (context) => HomeScreen(),
+            '/onboarding': (context) => OnboardingFlow(),
+          },
+        );
       },
     );
   }

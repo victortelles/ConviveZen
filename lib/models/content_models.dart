@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Modelo para contenido educativo sobre ansiedad y bienestar
 class ContentResource {
+  // Definicion de atributos
   final String id;
   final String title;
   final String description;
   final String type; // 'article', 'video', 'audio', 'exercise', 'technique'
-  final String category; // 'breathing', 'meditation', 'cbt', 'mindfulness', etc.
+  final String
+      category; // 'breathing', 'meditation', 'cbt', 'mindfulness', etc.
   final String? contentUrl; // URL del contenido multimedia
   final String? textContent; // Contenido de texto
   final int duration; // Duración en minutos (para videos/audios)
@@ -19,6 +21,7 @@ class ContentResource {
   final String authorId;
   final Map<String, dynamic> metadata; // Metadatos adicionales
 
+  // Constructor
   ContentResource({
     required this.id,
     required this.title,
@@ -36,10 +39,11 @@ class ContentResource {
     this.updatedAt,
     required this.authorId,
     Map<String, dynamic>? metadata,
-  }) : tags = tags ?? [],
-       createdAt = createdAt ?? DateTime.now(),
-       metadata = metadata ?? {};
+  })  : tags = tags ?? [],
+        createdAt = createdAt ?? DateTime.now(),
+        metadata = metadata ?? {};
 
+  // Convertir el modelo en mapa para Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -61,6 +65,7 @@ class ContentResource {
     };
   }
 
+  // Metodo Factory para crear el modelo desde un mapa de Firestore
   factory ContentResource.fromMap(Map<String, dynamic> map) {
     return ContentResource(
       id: map['id'] ?? '',
@@ -75,8 +80,12 @@ class ContentResource {
       difficulty: map['difficulty'] ?? 'beginner',
       isPublic: map['isPublic'] ?? true,
       isFeatured: map['isFeatured'] ?? false,
-      createdAt: map['createdAt'] != null ? (map['createdAt'] as Timestamp).toDate() : DateTime.now(),
-      updatedAt: map['updatedAt'] != null ? (map['updatedAt'] as Timestamp).toDate() : null,
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      updatedAt: map['updatedAt'] != null
+          ? (map['updatedAt'] as Timestamp).toDate()
+          : null,
       authorId: map['authorId'] ?? '',
       metadata: Map<String, dynamic>.from(map['metadata'] ?? {}),
     );
@@ -96,6 +105,7 @@ class UserProgress {
   final int accessCount;
   final Map<String, dynamic> progressData; // Datos específicos del progreso
 
+  // Constructor
   UserProgress({
     required this.id,
     required this.userId,
@@ -107,10 +117,11 @@ class UserProgress {
     DateTime? lastAccessedAt,
     this.accessCount = 0,
     Map<String, dynamic>? progressData,
-  }) : startedAt = startedAt ?? DateTime.now(),
-       lastAccessedAt = lastAccessedAt ?? DateTime.now(),
-       progressData = progressData ?? {};
+  })  : startedAt = startedAt ?? DateTime.now(),
+        lastAccessedAt = lastAccessedAt ?? DateTime.now(),
+        progressData = progressData ?? {};
 
+  // Convertir el modelo en mapa para Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -119,13 +130,15 @@ class UserProgress {
       'isCompleted': isCompleted,
       'progress': progress,
       'startedAt': Timestamp.fromDate(startedAt),
-      'completedAt': completedAt != null ? Timestamp.fromDate(completedAt!) : null,
+      'completedAt':
+          completedAt != null ? Timestamp.fromDate(completedAt!) : null,
       'lastAccessedAt': Timestamp.fromDate(lastAccessedAt),
       'accessCount': accessCount,
       'progressData': progressData,
     };
   }
 
+  // Metodo Factory para crear el modelo desde un mapa de Firestore
   factory UserProgress.fromMap(Map<String, dynamic> map) {
     return UserProgress(
       id: map['id'] ?? '',
@@ -133,14 +146,21 @@ class UserProgress {
       resourceId: map['resourceId'] ?? '',
       isCompleted: map['isCompleted'] ?? false,
       progress: map['progress'] ?? 0,
-      startedAt: map['startedAt'] != null ? (map['startedAt'] as Timestamp).toDate() : DateTime.now(),
-      completedAt: map['completedAt'] != null ? (map['completedAt'] as Timestamp).toDate() : null,
-      lastAccessedAt: map['lastAccessedAt'] != null ? (map['lastAccessedAt'] as Timestamp).toDate() : DateTime.now(),
+      startedAt: map['startedAt'] != null
+          ? (map['startedAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      completedAt: map['completedAt'] != null
+          ? (map['completedAt'] as Timestamp).toDate()
+          : null,
+      lastAccessedAt: map['lastAccessedAt'] != null
+          ? (map['lastAccessedAt'] as Timestamp).toDate()
+          : DateTime.now(),
       accessCount: map['accessCount'] ?? 0,
       progressData: Map<String, dynamic>.from(map['progressData'] ?? {}),
     );
   }
 
+  // Crear una copia con modificaciones
   UserProgress copyWith({
     bool? isCompleted,
     int? progress,

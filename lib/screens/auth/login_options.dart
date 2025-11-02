@@ -35,6 +35,7 @@ class _LoginOptionsState extends State<LoginOptions> {
     });
   }
 
+  // Metodo para ir a la pantalla de login con email
   void _goToEmailLogin() {
     Navigator.push(
       context,
@@ -42,6 +43,7 @@ class _LoginOptionsState extends State<LoginOptions> {
     );
   }
 
+  // Metodo para ir a la pantalla de login
   void _goToLoginScreen() {
     Navigator.push(
       context,

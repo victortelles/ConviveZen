@@ -9,11 +9,22 @@ import 'package:provider/provider.dart';
 
 //Widgets
 import '../../widgets/profile_avatar.dart';
+import 'widgets/section_title.dart';
+import 'widgets/onboarding_card.dart';
+import 'widgets/configuration_section.dart';
+import 'widgets/subscription_card.dart';
 
 //Services
 import '../../services/profile_image.dart';
 
 //Ventanas
+import 'screens/anxiety_types_settings_screen.dart';
+import 'screens/music_preferences_settings_screen.dart';
+import 'screens/hobbies_settings_screen.dart';
+import 'screens/help_style_settings_screen.dart';
+import 'screens/triggers_settings_screen.dart';
+import 'screens/personality_type_settings_screen.dart';
+import '../../models/onboarding_state.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -230,45 +241,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 24),
 
-            // Sección: Personalización
-            _buildSectionTitle("Personalización"),
+            // Sección 1: Personalización de ConviveZen
+            SectionTitle(title: "Personalizar mi ConviveZen"),
             const SizedBox(height: 12),
-            _buildOnboardingCard(),
+            OnboardingCard(
+              onNavigateToAnxietyTypes: _navigateToAnxietyTypes,
+              onNavigateToMusicPreferences: _navigateToMusicPreferences,
+              onNavigateToHobbies: _navigateToHobbies,
+              onNavigateToHelpStyle: _navigateToHelpStyle,
+              onNavigateToTriggers: _navigateToTriggers,
+              onNavigateToPersonalityType: _navigateToPersonalityType,
+            ),
 
             const SizedBox(height: 24),
 
-            // Sección: Configuración
-            _buildSectionTitle("Configuración"),
+            // Sección 2: Configuración de la App
+            SectionTitle(title: "Configuración de la App"),
             const SizedBox(height: 12),
-            _buildConfigurationSection(appState),
+            ConfigurationSection(
+              onNavigateToProfileSettings: _navigateToProfileSettings,
+            ),
 
             const SizedBox(height: 24),
 
-            // Sección: Suscripción
-            _buildSectionTitle("Suscripción"),
+            // Sección 3: ConviveZen Premium
+            SectionTitle(title: "ConviveZen Premium"),
             const SizedBox(height: 12),
-            _buildSubscriptionCard(),
-
-            const SizedBox(height: 24),
-
-            // Sección 1: Opciones de Onboarding
-            _buildSectionTitle("Configurar Onboarding"),
-            const SizedBox(height: 12),
-            _buildOnboardingCard(),
-
-            const SizedBox(height: 24),
-
-            // Sección 2: Configuración General
-            _buildSectionTitle("Configuración"),
-            const SizedBox(height: 12),
-            _buildConfigurationSection(appState),
-
-            const SizedBox(height: 24),
-
-            // Sección 3: Suscripción
-            _buildSectionTitle("Suscripción"),
-            const SizedBox(height: 12),
-            _buildSubscriptionCard(),
+            SubscriptionCard(
+              onShowSubscriptionOptions: _showSubscriptionOptions,
+            ),
 
             const SizedBox(height: 24),
 
@@ -475,314 +476,139 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return '${text.substring(0, maxLength)}...';
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: GoogleFonts.poppins(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: Colors.pink[800],
-      ),
-    );
-  }
-
-  Widget _buildOnboardingCard() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildOptionTile(
-              title: "Tipos de Ansiedad",
-              subtitle: "Modifica tus tipos de ansiedad",
-              icon: Icons.psychology,
-              color: Colors.purple,
-              onTap: () => _navigateToAnxietyTypes(),
-            ),
-            const Divider(height: 1),
-            _buildOptionTile(
-              title: "Preferencias Musicales",
-              subtitle: "Actualiza tus géneros favoritos",
-              icon: Icons.music_note,
-              color: Colors.orange,
-              onTap: () => _navigateToMusicPreferences(),
-            ),
-            const Divider(height: 1),
-            _buildOptionTile(
-              title: "Hobbies e Intereses",
-              subtitle: "Cambia tus hobbies y actividades",
-              icon: Icons.sports_soccer,
-              color: Colors.green,
-              onTap: () => _navigateToHobbies(),
-            ),
-            const Divider(height: 1),
-            _buildOptionTile(
-              title: "Estilo de Ayuda",
-              subtitle: "Personaliza cómo recibes apoyo",
-              icon: Icons.support_agent,
-              color: Colors.blue,
-              onTap: () => _navigateToHelpStyle(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildConfigurationSection(AppState appState) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildOptionTile(
-              title: "Perfil",
-              subtitle: "Contraseña, preferencias, datos personales",
-              icon: Icons.person,
-              color: Colors.pink,
-              onTap: () => _navigateToProfileSettings(),
-              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-            ),
-            const Divider(height: 1),
-            _buildSwitchTile(
-              title: "Modo Oscuro",
-              subtitle: "Cambia el tema de la aplicación",
-              icon: Icons.dark_mode,
-              color: Colors.indigo,
-              value: appState.isDarkMode,
-              onChanged: (value) => appState.toggleDarkMode(),
-            ),
-            const Divider(height: 1),
-            _buildSwitchTile(
-              title: "Notificaciones",
-              subtitle: "Alertas y recordatorios",
-              icon: Icons.notifications,
-              color: Colors.amber,
-              value: true, // TODO: Implementar estado de notificaciones
-              onChanged: (value) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Configuración de notificaciones próximamente')),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSubscriptionCard() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildOptionTile(
-              title: "Plan Actual: Gratis",
-              subtitle: "Toca para ver opciones de suscripción",
-              icon: Icons.card_membership,
-              color: Colors.green,
-              onTap: () => _showSubscriptionOptions(),
-              trailing: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'ACTIVO',
-                  style: GoogleFonts.poppins(
-                    fontSize: 10,
-                    color: Colors.green.shade700,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOptionTile({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-    Widget? trailing,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      leading: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: color, size: 24),
-      ),
-      title: Text(
-        title,
-        style: GoogleFonts.poppins(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Colors.pink[800],
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: GoogleFonts.poppins(
-          fontSize: 12,
-          color: Colors.grey[600],
-        ),
-      ),
-      trailing: trailing ?? Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: onTap,
-    );
-  }
-
-  Widget _buildSwitchTile({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required bool value,
-    required Function(bool) onChanged,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      leading: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: color, size: 24),
-      ),
-      title: Text(
-        title,
-        style: GoogleFonts.poppins(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Colors.pink[800],
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: GoogleFonts.poppins(
-          fontSize: 12,
-          color: Colors.grey[600],
-        ),
-      ),
-      trailing: Switch(
-        value: value,
-        onChanged: onChanged,
-        activeColor: Colors.pink[400],
-      ),
-    );
-  }
-
   // Métodos de navegación
   void _navigateToAnxietyTypes() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Configuración de tipos de ansiedad próximamente')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AnxietyTypesSettingsScreen(),
+      ),
     );
   }
 
-  void _navigateToMusicPreferences() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Configuración de música próximamente')),
+  // Metodo para navegar a la pantalla de preferencias musicales
+  void _navigateToMusicPreferences() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MusicPreferencesSettingsScreen(),
+      ),
     );
   }
 
-  void _navigateToHobbies() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Configuración de hobbies próximamente')),
+  // Metodo para navegar a la pantalla de hobbies
+  void _navigateToHobbies() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HobbiesSettingsScreen(),
+      ),
     );
   }
 
-  void _navigateToHelpStyle() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Configuración de estilo de ayuda próximamente')),
+  // Metodo para navegar a la pantalla de estilo de ayuda
+  void _navigateToHelpStyle() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HelpStyleSettingsScreen(),
+      ),
     );
   }
 
+  // Metodo para navegar a la pantalla de triggers
+  void _navigateToTriggers() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TriggersSettingsScreen(),
+      ),
+    );
+  }
+
+  // Metodo para navegar a la pantalla de tipo de personalidad
+  void _navigateToPersonalityType() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PersonalityTypeSettingsScreen(),
+      ),
+    );
+  }
+
+  // Metodo para navegar a la pantalla de configuracion de perfil
   void _navigateToProfileSettings() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Configuración de perfil próximamente')),
     );
   }
 
+  // Mostrar opciones de suscripción
   void _showSubscriptionOptions() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.grey[850] : Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 10),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Opciones de Suscripción',
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.pink.shade700,
-              ),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    _buildSubscriptionPlanCard('Gratis', 'Plan actual', true),
-                    SizedBox(height: 16),
-                    _buildSubscriptionPlanCard('Premium', '\$9.99/mes', false),
-                  ],
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 20),
+              Text(
+                'Planes ConviveZen',
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink.shade700,
+                ),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      _buildSubscriptionPlanCard('Gratis', 'Plan actual', true),
+                      SizedBox(height: 16),
+                      _buildSubscriptionPlanCard('Premium', '\$9.99/mes', false),
+                      SizedBox(height: 20), // Extra padding at bottom
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  // CardUp para cada plan de suscripción
   Widget _buildSubscriptionPlanCard(String title, String price, bool isActive) {
     bool isPremium = title == 'Premium';
-    
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20),
@@ -836,16 +662,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           SizedBox(height: 12),
           if (isPremium) ...[
-            _buildFeatureItem('Meditaciones personalizadas'),
-            _buildFeatureItem('Chat de IA compasiva 24/7'),
-            _buildFeatureItem('Juegos calmantes avanzados'),
-            _buildFeatureItem('Análisis detallado de progreso'),
-            _buildFeatureItem('Alertas inteligentes'),
+            _buildFeatureItem('Meditaciones guiadas personalizadas'),
+            _buildFeatureItem('Asistente IA especializado en ansiedad'),
+            _buildFeatureItem('Ejercicios avanzados de relajación'),
+            _buildFeatureItem('Análisis completo de tu bienestar'),
+            _buildFeatureItem('Alertas inteligentes de prevención'),
           ] else ...[
-            _buildFeatureItem('Respiración guiada'),
-            _buildFeatureItem('Música relajante básica'),
-            _buildFeatureItem('Contactos de emergencia'),
-            _buildFeatureItem('Registro de estado emocional'),
+            _buildFeatureItem('Botón de pánico inmediato'),
+            _buildFeatureItem('Ejercicios básicos de respiración'),
+            _buildFeatureItem('Música calmante esencial'),
+            _buildFeatureItem('Contactos de confianza'),
+            _buildFeatureItem('Registro simple de emociones'),
           ],
           SizedBox(height: 16),
           SizedBox(
@@ -895,6 +722,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  //
   Widget _buildFeatureItem(String feature) {
     return Padding(
       padding: EdgeInsets.only(bottom: 4),
@@ -908,6 +736,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+// Widget wrapper para usar pantallas de onboarding independientemente
+class _OnboardingScreenWrapper extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onSave;
+
+  const _OnboardingScreenWrapper({
+    Key? key,
+    required this.child,
+    required this.onSave,
+  }) : super(key: key);
+
+  @override
+  _OnboardingScreenWrapperState createState() => _OnboardingScreenWrapperState();
+}
+
+class _OnboardingScreenWrapperState extends State<_OnboardingScreenWrapper> {
+  @override
+  Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
+    final isFirstTime = appState.userProfile?.isFirstTime ?? true;
+    
+    return Consumer<OnboardingState>(
+      builder: (context, onboardingState, _) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Actualizar Configuración'),
+            backgroundColor: Colors.pink.shade50,
+            foregroundColor: Colors.pink.shade700,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // Guardar los datos en Firestore
+                  widget.onSave();
+                },
+                child: Text(
+                  'Guardar',
+                  style: TextStyle(
+                    color: Colors.pink.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          body: isFirstTime 
+            ? widget.child // Mostrar con barra de progreso para usuarios nuevos
+            : _buildStandaloneScreen(context), // Sin barra de progreso para usuarios existentes
+        );
+      },
+    );
+  }
+
+  Widget _buildStandaloneScreen(BuildContext context) {
+    // Wrapper que elimina las barras de progreso y adapta la pantalla para usuarios existentes
+    return Container(
+      padding: EdgeInsets.all(16),
+      child: widget.child,
     );
   }
 }

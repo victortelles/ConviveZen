@@ -144,6 +144,8 @@ class AppState with ChangeNotifier {
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(_currentUser!.uid)
+          .collection('preferences')
+          .doc('main')
           .get();
 
       if (userDoc.exists && userDoc.data() != null) {
@@ -195,6 +197,149 @@ class AppState with ChangeNotifier {
       print('User preferences saved successfully');
     } catch (e) {
       print('Error saving user preferences: $e');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Método para actualizar tipos de ansiedad en el perfil del usuario
+  Future<void> updateAnxietyTypes(List<String> anxietyTypes) async {
+    if (_currentUser == null || _userProfile == null) return;
+
+    setLoading(true);
+    try {
+      await _firestoreService.updateUser(_currentUser!.uid, {
+        'anxietyTypes': anxietyTypes,
+      });
+
+      // Actualizar el perfil local
+      _userProfile = UserModel(
+        uid: _userProfile!.uid,
+        email: _userProfile!.email,
+        name: _userProfile!.name,
+        profilePic: _userProfile!.profilePic,
+        authProvider: _userProfile!.authProvider,
+        isActive: _userProfile!.isActive,
+        isFirstTime: _userProfile!.isFirstTime,
+        createdAt: _userProfile!.createdAt,
+        birthdate: _userProfile!.birthdate,
+        anxietyTypes: anxietyTypes,
+        anxietyLevel: _userProfile!.anxietyLevel,
+        personalityType: _userProfile!.personalityType,
+        triggers: _userProfile!.triggers,
+        hasSubscription: _userProfile!.hasSubscription,
+        subscriptionExpiry: _userProfile!.subscriptionExpiry,
+      );
+
+      notifyListeners();
+    } catch (e) {
+      print('Error updating anxiety types: $e');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Método para actualizar géneros musicales
+  Future<void> updateMusicGenres(List<String> musicGenres) async {
+    if (_currentUser == null) return;
+
+    setLoading(true);
+    try {
+      UserPreferences currentPrefs = await getUserPreferences();
+      UserPreferences updatedPrefs = currentPrefs.copyWith(
+        musicGenres: musicGenres,
+        lastUpdated: DateTime.now(),
+      );
+
+      await saveUserPreferencesToFirestore(updatedPrefs);
+    } catch (e) {
+      print('Error updating music genres: $e');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Método para actualizar hobbies
+  Future<void> updateHobbies(List<String> hobbies) async {
+    if (_currentUser == null) return;
+
+    setLoading(true);
+    try {
+      UserPreferences currentPrefs = await getUserPreferences();
+      UserPreferences updatedPrefs = currentPrefs.copyWith(
+        hobbies: hobbies,
+        lastUpdated: DateTime.now(),
+      );
+
+      await saveUserPreferencesToFirestore(updatedPrefs);
+    } catch (e) {
+      print('Error updating hobbies: $e');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Método para actualizar estilo de ayuda
+  Future<void> updateHelpStyle(String helpStyle) async {
+    if (_currentUser == null) return;
+
+    setLoading(true);
+    try {
+      UserPreferences currentPrefs = await getUserPreferences();
+      UserPreferences updatedPrefs = currentPrefs.copyWith(
+        helpStyle: helpStyle,
+        lastUpdated: DateTime.now(),
+      );
+
+      await saveUserPreferencesToFirestore(updatedPrefs);
+    } catch (e) {
+      print('Error updating help style: $e');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Método para actualizar triggers
+  Future<void> updateTriggers(List<String> triggers) async {
+    if (_currentUser == null) return;
+
+    setLoading(true);
+    try {
+      UserPreferences currentPrefs = await getUserPreferences();
+      UserPreferences updatedPrefs = currentPrefs.copyWith(
+        triggers: triggers,
+        lastUpdated: DateTime.now(),
+      );
+
+      await saveUserPreferencesToFirestore(updatedPrefs);
+    } catch (e) {
+      print('Error updating triggers: $e');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Método para actualizar tipo de personalidad
+  Future<void> updatePersonalityType(String personalityType) async {
+    if (_currentUser == null) return;
+
+    setLoading(true);
+    try {
+      UserPreferences currentPrefs = await getUserPreferences();
+      UserPreferences updatedPrefs = currentPrefs.copyWith(
+        personalityType: personalityType,
+        lastUpdated: DateTime.now(),
+      );
+
+      await saveUserPreferencesToFirestore(updatedPrefs);
+    } catch (e) {
+      print('Error updating personality type: $e');
       throw e;
     } finally {
       setLoading(false);

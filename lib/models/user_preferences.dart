@@ -1,38 +1,46 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// User preferences model for hobbies, affirmations, favorite tools, and help preferences
+// Modelo de preferencias de usuario para personalizar la experiencia
 class UserPreferences {
-  // Hobbies and interests
+  // Definir atributos
+  // Hobbies y intereses
   final List<String> hobbies;
   final List<String> musicGenres;
   final List<String> gameTypes; // 'puzzle', 'arcade', 'strategy', 'relaxing'
 
-  // Affirmations and motivational content
-  final List<String> personalAffirmations; // Custom affirmations
+  // Datos específicos de ansiedad
+  final List<String> triggers; // Principales desencadenantes de ansiedad
+  final String? personalityType; // 'introvert', 'extrovert', 'ambivert'
+
+  // Afirmaciones y contenido motivacional
+  final List<String> personalAffirmations; // Personalizacion de afirmaciones
   final List<String> favoriteQuotes;
   final String preferredTone; // 'encouraging', 'calming', 'motivational', 'gentle'
 
-  // Emergency tools preferences
+  // Preferencia de herramientas de emergencia
   final List<String> favoriteTools; // 'music', 'games', 'breathing', 'meditation', 'chat', 'contacts'
   final String primaryTool; // Main tool to show first
   final bool enableAIChat;
   final bool autoContactEmergency; // Auto-notify emergency contacts
 
-  // Help preferences
+  // Preferencias de ayuda
   final String helpStyle; // 'guided', 'self_directed', 'mixed'
-  final bool preferVisual; // Prefers visual content
-  final bool preferAudio; // Prefers audio content
-  final bool enableNotifications;
-  final int sessionDuration; // Preferred session length in minutes
+  final bool preferVisual; // Preferencia por contenido visual
+  final bool preferAudio; // Preferencia por contenido de audio
+  final bool enableNotifications; // habilitar notificaciones de la app
+  final int sessionDuration; // Preferencia de duración de sesión en minutos
 
   // Metadata
   final DateTime? lastUpdated;
   final bool isOnboardingComplete;
 
+  // Constructor
   UserPreferences({
     List<String>? hobbies,
     List<String>? musicGenres,
     List<String>? gameTypes,
+    List<String>? triggers,
+    this.personalityType,
     List<String>? personalAffirmations,
     List<String>? favoriteQuotes,
     this.preferredTone = 'calming',
@@ -50,15 +58,19 @@ class UserPreferences {
   })  : hobbies = hobbies ?? [],
         musicGenres = musicGenres ?? [],
         gameTypes = gameTypes ?? [],
+        triggers = triggers ?? [],
         personalAffirmations = personalAffirmations ?? [],
         favoriteQuotes = favoriteQuotes ?? [],
         favoriteTools = favoriteTools ?? [];
 
+  // Metodo Factory para crear el modelo desde un mapa de Firestore
   factory UserPreferences.fromMap(Map<String, dynamic> map) {
     return UserPreferences(
       hobbies: List<String>.from(map['hobbies'] ?? []),
       musicGenres: List<String>.from(map['musicGenres'] ?? []),
       gameTypes: List<String>.from(map['gameTypes'] ?? []),
+      triggers: List<String>.from(map['triggers'] ?? []),
+      personalityType: map['personalityType'],
       personalAffirmations:
           List<String>.from(map['personalAffirmations'] ?? []),
       favoriteQuotes: List<String>.from(map['favoriteQuotes'] ?? []),
@@ -81,11 +93,14 @@ class UserPreferences {
     );
   }
 
+  // Convertir el modelo en mapa para Firestore
   Map<String, dynamic> toMap() {
     return {
       'hobbies': hobbies,
       'musicGenres': musicGenres,
       'gameTypes': gameTypes,
+      'triggers': triggers,
+      'personalityType': personalityType,
       'personalAffirmations': personalAffirmations,
       'favoriteQuotes': favoriteQuotes,
       'preferredTone': preferredTone,
@@ -105,10 +120,13 @@ class UserPreferences {
     };
   }
 
+  // Metodo para clonar y actualizar 
   UserPreferences copyWith({
     List<String>? hobbies,
     List<String>? musicGenres,
     List<String>? gameTypes,
+    List<String>? triggers,
+    String? personalityType,
     List<String>? personalAffirmations,
     List<String>? favoriteQuotes,
     String? preferredTone,
@@ -128,6 +146,8 @@ class UserPreferences {
       hobbies: hobbies ?? this.hobbies,
       musicGenres: musicGenres ?? this.musicGenres,
       gameTypes: gameTypes ?? this.gameTypes,
+      triggers: triggers ?? this.triggers,
+      personalityType: personalityType ?? this.personalityType,
       personalAffirmations: personalAffirmations ?? this.personalAffirmations,
       favoriteQuotes: favoriteQuotes ?? this.favoriteQuotes,
       preferredTone: preferredTone ?? this.preferredTone,
@@ -145,6 +165,7 @@ class UserPreferences {
     );
   }
 
+  // Método para marcar la finalización del onboarding
   UserPreferences completeOnboarding() {
     return copyWith(
       isOnboardingComplete: true,

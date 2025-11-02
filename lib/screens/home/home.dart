@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/app_state.dart';
 import '../profile/profile.dart';
+import 'widgets/emergency_button.dart';
+import 'widgets/emergency_tools_modal.dart';
+import 'widgets/home_header.dart';
+import 'widgets/premium_feature_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -49,234 +53,30 @@ class _HomeScreenState extends State<HomeScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.85,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
-        ),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 10),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Herramientas de Emergencia',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.pink.shade700,
-              ),
-            ),
-            Text(
-              'Estamos aquí para ayudarte 💗',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.pink.shade500,
-              ),
-            ),
-            SizedBox(height: 30),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 15,
-                  children: [
-                    _emergencyToolButton(
-                      title: 'Respiración Guiada',
-                      subtitle: 'Calma inmediata',
-                      icon: Icons.air,
-                      color: Colors.blue.shade300,
-                      isPremium: false,
-                      onTap: () => _launchBreathingExercise(),
-                    ),
-                    _emergencyToolButton(
-                      title: 'Meditación Rápida',
-                      subtitle: '3-5 minutos',
-                      icon: Icons.self_improvement,
-                      color: Colors.purple.shade300,
-                      isPremium: true,
-                      onTap: () => _launchMeditation(),
-                    ),
-                    _emergencyToolButton(
-                      title: 'Música Relajante',
-                      subtitle: 'Tu playlist personalizada',
-                      icon: Icons.music_note,
-                      color: Colors.green.shade300,
-                      isPremium: false,
-                      onTap: () => _launchMusic(),
-                    ),
-                    _emergencyToolButton(
-                      title: 'Juegos Calmantes',
-                      subtitle: 'Distrae tu mente',
-                      icon: Icons.games,
-                      color: Colors.orange.shade300,
-                      isPremium: true,
-                      onTap: () => _launchGames(),
-                    ),
-                    _emergencyToolButton(
-                      title: 'Chat de Apoyo',
-                      subtitle: 'IA compasiva',
-                      icon: Icons.chat_bubble_outline,
-                      color: Colors.cyan.shade300,
-                      isPremium: true,
-                      onTap: () => _launchAIChat(),
-                    ),
-                    _emergencyToolButton(
-                      title: 'Contactos de Emergencia',
-                      subtitle: 'Llama a alguien de confianza',
-                      icon: Icons.phone,
-                      color: Colors.red.shade300,
-                      isPremium: false,
-                      onTap: () => _showEmergencyContacts(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isEmergencyMode = false;
-                    });
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pink.shade400,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: Text(
-                    'Me siento mejor',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+      builder: (context) => EmergencyToolsModal(
+        onBreathingExercise: _launchBreathingExercise,
+        onMeditation: _launchMeditation,
+        onMusic: _launchMusic,
+        onGames: _launchGames,
+        onAIChat: _launchAIChat,
+        onEmergencyContacts: _showEmergencyContacts,
+        onFeelBetter: () {
+          setState(() {
+            _isEmergencyMode = false;
+          });
+          Navigator.pop(context);
+        },
+        onShowPremiumDialog: _showPremiumFeatureDialog,
       ),
     );
   }
 
-  Widget _emergencyToolButton({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required bool isPremium,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        if (isPremium) {
-          Navigator.pop(context);
-          _showPremiumFeatureDialog(title);
-        } else {
-          onTap();
-        }
+  void _showPremiumFeatureDialog(String featureName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PremiumFeatureDialog(featureName: featureName);
       },
-      child: Container(
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isPremium ? Colors.orange.shade300 : color.withOpacity(0.3),
-            width: isPremium ? 2 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isPremium ? Colors.orange.withOpacity(0.2) : color.withOpacity(0.2),
-              blurRadius: 10,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: isPremium ? Colors.grey.shade400 : color,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Icon(
-                    isPremium ? Icons.lock : icon,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: isPremium ? Colors.grey.shade600 : Colors.pink.shade700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  isPremium ? 'Solo Premium' : subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isPremium ? Colors.grey.shade500 : Colors.pink.shade500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-            if (isPremium)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade500,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'PREMIUM',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -322,68 +122,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  void _showPremiumFeatureDialog(String featureName) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.star, color: Colors.orange.shade600),
-              SizedBox(width: 8),
-              Text('Función Premium'),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '$featureName es una función premium.',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Text('Con la suscripción Premium tendrás acceso a:'),
-              SizedBox(height: 8),
-              Text('• Meditaciones personalizadas'),
-              Text('• Chat de IA compasiva'),
-              Text('• Juegos calmantes avanzados'),
-              Text('• Análisis detallado de progreso'),
-              Text('• Alertas inteligentes'),
-              SizedBox(height: 10),
-              Text(
-                'Suscríbete para desbloquear todas las herramientas de manejo de ansiedad.',
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Más tarde'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Suscripción Premium próximamente disponible'),
-                    backgroundColor: Colors.orange.shade600,
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange.shade600,
-                foregroundColor: Colors.white,
-              ),
-              child: Text('Suscribirse'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
@@ -403,56 +141,16 @@ class _HomeScreenState extends State<HomeScreen>
         child: SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Hola, ${appState.userProfile?.name ?? 'Usuario'}',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.pink.shade700,
-                          ),
-                        ),
-                        Text(
-                          '¿Cómo te sientes hoy?',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.pink.shade600,
-                          ),
-                        ),
-                      ],
+              HomeHeader(
+                userName: appState.userProfile?.name ?? 'Usuario',
+                onProfileTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.pink.shade200,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
               Expanded(
                 child: Center(
@@ -470,62 +168,9 @@ class _HomeScreenState extends State<HomeScreen>
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 40),
-                        AnimatedBuilder(
-                          animation: _pulseAnimation,
-                          builder: (context, child) {
-                            return Transform.scale(
-                              scale: _pulseAnimation.value,
-                              child: GestureDetector(
-                                onTap: _activateEmergencyMode,
-                                child: Container(
-                                  width: 200,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        Colors.pink.shade300,
-                                        Colors.pink.shade500,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.pink.shade200,
-                                        blurRadius: 20,
-                                        spreadRadius: 5,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.favorite,
-                                        color: Colors.white,
-                                        size: 60,
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        'SOS',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Ayuda',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                        EmergencyButton(
+                          pulseAnimation: _pulseAnimation,
+                          onPressed: _activateEmergencyMode,
                         ),
                         SizedBox(height: 40),
                         Text(
@@ -562,94 +207,9 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 ),
               ),
-              if (!_isEmergencyMode)
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Acceso rápido',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.pink.shade700,
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _quickAccessButton(
-                            'Respirar',
-                            Icons.air,
-                            Colors.blue.shade300,
-                            _launchBreathingExercise,
-                          ),
-                          _quickAccessButton(
-                            'Música',
-                            Icons.music_note,
-                            Colors.green.shade300,
-                            _launchMusic,
-                          ),
-                          _quickAccessButton(
-                            'Meditar',
-                            Icons.self_improvement,
-                            Colors.purple.shade300,
-                            _launchMeditation,
-                          ),
-                          _quickAccessButton(
-                            'Chat',
-                            Icons.chat,
-                            Colors.cyan.shade300,
-                            _launchAIChat,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _quickAccessButton(String label, IconData icon, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.pink.shade600,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
       ),
     );
   }
