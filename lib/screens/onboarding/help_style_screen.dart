@@ -12,6 +12,7 @@ class HelpStyleScreen extends StatefulWidget {
   _HelpStyleScreenState createState() => _HelpStyleScreenState();
 }
 
+// Pantalla para seleccionar el estilo de ayuda preferido durante el onboarding
 class _HelpStyleScreenState extends State<HelpStyleScreen> {
   final List<Map<String, dynamic>> _helpStyles = [
     {
@@ -52,6 +53,7 @@ class _HelpStyleScreenState extends State<HelpStyleScreen> {
     },
   ];
 
+  // Método para actualizar el estilo de ayuda seleccionado en el estado del onboarding
   void _selectHelpStyle(String styleKey) {
     final onboardingState = Provider.of<OnboardingState>(context, listen: false);
     onboardingState.setHelpStyle(styleKey);
@@ -63,27 +65,30 @@ class _HelpStyleScreenState extends State<HelpStyleScreen> {
     return Consumer<OnboardingState>(
       builder: (context, onboardingState, _) {
         return OnboardingScaffold(
+          // Titulo
           title: '¿Cómo prefieres recibir ayuda?',
+          // Subtitulo
           subtitle: 'Esto nos permite adaptar la experiencia a tu estilo de aprendizaje',
+          // Texto del botón
           buttonText: onboardingState.helpStyle != null 
             ? '¡Completar configuración!' 
             : 'Selecciona una opción',
           isValid: onboardingState.helpStyle != null,
           onContinue: () async {
-            // Complete onboarding when button is pressed
+            // Completar onboarding cuando se presiona el botón
             final appState = Provider.of<AppState>(context, listen: false);
             final currentUserProfile = appState.userProfile!;
 
-            // Update user data using copyWith to preserve existing data
+            // Actualizar datos del usuario utilizando copyWith para preservar datos existentes
             final updatedUser = currentUserProfile.copyWith(
-              anxietyTypes: onboardingState.anxietyTypes,
-              personalityType: onboardingState.personalityType!,
-              triggers: onboardingState.triggers,
-              isFirstTime: false, // Mark onboarding as complete
+              isFirstTime: false, // marcar cuando el onboarding lo completo
             );
 
-            // Create user preferences
+            // crear el objeto UserPreferences con todos los datos del onboarding
             final preferences = UserPreferences(
+              anxietyTypes: onboardingState.anxietyTypes,
+              triggers: onboardingState.triggers,
+              personalityType: onboardingState.personalityType!,
               hobbies: onboardingState.hobbies,
               musicGenres: onboardingState.musicGenres,
               gameTypes: ['puzzle', 'relaxing'],
@@ -118,7 +123,7 @@ class _HelpStyleScreenState extends State<HelpStyleScreen> {
             itemBuilder: (context, index) {
               final style = _helpStyles[index];
               final isSelected = onboardingState.helpStyle == style['key'];
-              
+
               return OnboardingListItem(
                 icon: style['icon'],
                 title: style['title'],

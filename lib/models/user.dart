@@ -13,11 +13,8 @@ class UserModel {
   final bool isFirstTime;     // Bandera para verificar si el usuario necesita onboarding
   final DateTime? birthdate;
 
-  // Datos específicos de ansiedad - Registro durante el onboarding
-  final List<String> anxietyTypes;  // tipos de ansiedad
-  final int? anxietyLevel;          // Escala de 1-10
-  final String? personalityType;    // 'introvert', 'extrovert', 'ambivert'
-  final List<String> triggers;      // Principales desencadenantes de ansiedad
+  // Datos específicos del usuario (información básica, no preferencias)
+  final int? anxietyLevel;          // Escala de 1-10 (nivel general, no tipos específicos)
   final bool hasSubscription;       // Estado de suscripción (default = false (free))
   final DateTime? subscriptionExpiry;
 
@@ -32,15 +29,10 @@ class UserModel {
     this.isFirstTime = true,        // Default to true for new users
     DateTime? createdAt,
     this.birthdate,
-    List<String>? anxietyTypes,
     this.anxietyLevel,
-    this.personalityType,
-    List<String>? triggers,
     this.hasSubscription = false,
     this.subscriptionExpiry,
-  })  : this.createdAt = createdAt ?? DateTime.now(),
-        this.anxietyTypes = anxietyTypes ?? [],
-        this.triggers = triggers ?? [];
+  })  : this.createdAt = createdAt ?? DateTime.now();
 
   // Helper | Metodo para calcular la edad base la fecha
   int? get age {
@@ -74,10 +66,7 @@ class UserModel {
               ? (map['birthdate'] as Timestamp).toDate()
               : DateTime.parse(map['birthdate']))
           : null,
-      anxietyTypes: List<String>.from(map['anxietyTypes'] ?? []),
       anxietyLevel: map['anxietyLevel'],
-      personalityType: map['personalityType'],
-      triggers: List<String>.from(map['triggers'] ?? []),
       hasSubscription: map['hasSubscription'] ?? false,
       subscriptionExpiry: map['subscriptionExpiry'] != null
           ? (map['subscriptionExpiry'] is Timestamp
@@ -99,10 +88,7 @@ class UserModel {
       'isFirstTime': isFirstTime,
       'createdAt': createdAt.toIso8601String(),
       'birthdate': birthdate?.toIso8601String(),
-      'anxietyTypes': anxietyTypes,
       'anxietyLevel': anxietyLevel,
-      'personalityType': personalityType,
-      'triggers': triggers,
       'hasSubscription': hasSubscription,
       'subscriptionExpiry': subscriptionExpiry?.toIso8601String(),
     };
@@ -115,10 +101,7 @@ class UserModel {
     bool? isActive,
     bool? isFirstTime,
     DateTime? birthdate,
-    List<String>? anxietyTypes,
     int? anxietyLevel,
-    String? personalityType,
-    List<String>? triggers,
     bool? hasSubscription,
     DateTime? subscriptionExpiry,
   }) {
@@ -132,10 +115,7 @@ class UserModel {
       isFirstTime: isFirstTime ?? this.isFirstTime,
       createdAt: this.createdAt,
       birthdate: birthdate ?? this.birthdate,
-      anxietyTypes: anxietyTypes ?? this.anxietyTypes,
       anxietyLevel: anxietyLevel ?? this.anxietyLevel,
-      personalityType: personalityType ?? this.personalityType,
-      triggers: triggers ?? this.triggers,
       hasSubscription: hasSubscription ?? this.hasSubscription,
       subscriptionExpiry: subscriptionExpiry ?? this.subscriptionExpiry,
     );

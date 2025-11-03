@@ -48,18 +48,18 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
 
     print('DEBUG: Current user profile: ${currentUserProfile.email}, isFirstTime: ${currentUserProfile.isFirstTime}');
 
-    // Update user data using copyWith to preserve existing data and only update what was collected
+    // Solo actualizar isFirstTime en el perfil del usuario (quitar datos duplicados)
     final updatedUser = currentUserProfile.copyWith(
-      anxietyTypes: _onboardingState.anxietyTypes,
-      personalityType: _onboardingState.personalityType!,
-      triggers: _onboardingState.triggers,
-      isFirstTime: false, // Mark onboarding as complete
+      isFirstTime: false, // Marcar onboarding cuando se haya completado
     );
 
     print('DEBUG: Updated user isFirstTime: ${updatedUser.isFirstTime}');
 
-    // Create user preferences
+    // Crear user preferences con TODOS los datos del onboarding
     final preferences = UserPreferences(
+      anxietyTypes: _onboardingState.anxietyTypes,
+      triggers: _onboardingState.triggers,
+      personalityType: _onboardingState.personalityType!,
       hobbies: _onboardingState.hobbies,
       musicGenres: _onboardingState.musicGenres,
       gameTypes: ['puzzle', 'relaxing'],
@@ -106,7 +106,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/logo_background.png'),
+                  image: AssetImage('assets/images/splash/logo.png'),
                   fit: BoxFit.cover,
                   opacity: 0.1,
                 ),

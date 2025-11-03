@@ -81,4 +81,36 @@ class FirestoreService {
     }
   }
 
+  // DELETE | Funcionalidad para eliminar completamente un usuario y todos sus datos
+  Future<void> deleteUser(String uid) async {
+    try {
+      // Eliminar subcolección de preferences
+      final preferencesCollection = _usersCollection.doc(uid).collection('preferences');
+      final preferencesSnapshot = await preferencesCollection.get();
+
+      for (DocumentSnapshot doc in preferencesSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      // Eliminar otras subcolecciones si existen (contacts, tools, logs, etc.)
+      final collections = ['contacts', 'tools', 'crisis_logs', 'sessions'];
+      for (String collectionName in collections) {
+        final collection = _usersCollection.doc(uid).collection(collectionName);
+        final snapshot = await collection.get();
+
+        for (DocumentSnapshot doc in snapshot.docs) {
+          await doc.reference.delete();
+        }
+      }
+
+      // Eliminar el documento principal del usuario
+      await _usersCollection.doc(uid).delete();
+
+      print('Usuario y todos sus datos eliminados de Firestore: $uid');
+    } catch (e) {
+      print('Error eliminando datos del usuario: $e');
+      throw e;
+    }
+  }
+
 }

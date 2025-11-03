@@ -126,6 +126,12 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
 
+    // Limitar el nombre de usuario a 16 caracteres y agregar '...'
+    String displayName = appState.userProfile?.name ?? 'Usuario';
+    if (displayName.length > 16) {
+      displayName = displayName.substring(0, 16) + '...';
+    }
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -142,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: Column(
             children: [
               HomeHeader(
-                userName: appState.userProfile?.name ?? 'Usuario',
+                userName: displayName,
                 onProfileTap: () {
                   Navigator.push(
                     context,

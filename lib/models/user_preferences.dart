@@ -9,6 +9,7 @@ class UserPreferences {
   final List<String> gameTypes; // 'puzzle', 'arcade', 'strategy', 'relaxing'
 
   // Datos específicos de ansiedad
+  final List<String> anxietyTypes; // tipos de ansiedad que experimenta el usuario
   final List<String> triggers; // Principales desencadenantes de ansiedad
   final String? personalityType; // 'introvert', 'extrovert', 'ambivert'
 
@@ -39,6 +40,7 @@ class UserPreferences {
     List<String>? hobbies,
     List<String>? musicGenres,
     List<String>? gameTypes,
+    List<String>? anxietyTypes,
     List<String>? triggers,
     this.personalityType,
     List<String>? personalAffirmations,
@@ -58,6 +60,7 @@ class UserPreferences {
   })  : hobbies = hobbies ?? [],
         musicGenres = musicGenres ?? [],
         gameTypes = gameTypes ?? [],
+        anxietyTypes = anxietyTypes ?? [],
         triggers = triggers ?? [],
         personalAffirmations = personalAffirmations ?? [],
         favoriteQuotes = favoriteQuotes ?? [],
@@ -69,6 +72,7 @@ class UserPreferences {
       hobbies: List<String>.from(map['hobbies'] ?? []),
       musicGenres: List<String>.from(map['musicGenres'] ?? []),
       gameTypes: List<String>.from(map['gameTypes'] ?? []),
+      anxietyTypes: List<String>.from(map['anxietyTypes'] ?? []),
       triggers: List<String>.from(map['triggers'] ?? []),
       personalityType: map['personalityType'],
       personalAffirmations:
@@ -99,6 +103,7 @@ class UserPreferences {
       'hobbies': hobbies,
       'musicGenres': musicGenres,
       'gameTypes': gameTypes,
+      'anxietyTypes': anxietyTypes,
       'triggers': triggers,
       'personalityType': personalityType,
       'personalAffirmations': personalAffirmations,
@@ -125,6 +130,7 @@ class UserPreferences {
     List<String>? hobbies,
     List<String>? musicGenres,
     List<String>? gameTypes,
+    List<String>? anxietyTypes,
     List<String>? triggers,
     String? personalityType,
     List<String>? personalAffirmations,
@@ -146,6 +152,7 @@ class UserPreferences {
       hobbies: hobbies ?? this.hobbies,
       musicGenres: musicGenres ?? this.musicGenres,
       gameTypes: gameTypes ?? this.gameTypes,
+      anxietyTypes: anxietyTypes ?? this.anxietyTypes,
       triggers: triggers ?? this.triggers,
       personalityType: personalityType ?? this.personalityType,
       personalAffirmations: personalAffirmations ?? this.personalAffirmations,

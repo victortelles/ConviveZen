@@ -13,6 +13,7 @@ class _HelpStyleSettingsScreenState extends State<HelpStyleSettingsScreen> {
   String _selectedHelpStyle = '';
   bool _isLoading = true;
 
+  // Lista de estilos de ayuda disponibles
   final List<Map<String, dynamic>> _helpStyles = [
     {
       'key': 'guided',
@@ -92,6 +93,7 @@ class _HelpStyleSettingsScreenState extends State<HelpStyleSettingsScreen> {
     _loadCurrentHelpStyle();
   }
 
+  // Cargar el estilo de ayuda actual del usuario
   void _loadCurrentHelpStyle() async {
     final appState = Provider.of<AppState>(context, listen: false);
     
@@ -114,12 +116,14 @@ class _HelpStyleSettingsScreenState extends State<HelpStyleSettingsScreen> {
     }
   }
 
+  // Método para seleccionar un estilo de ayuda
   void _selectHelpStyle(String key) {
     setState(() {
       _selectedHelpStyle = key;
     });
   }
 
+  // Método para guardar el estilo de ayuda seleccionado
   Future<void> _saveHelpStyle() async {
     try {
       final appState = Provider.of<AppState>(context, listen: false);
@@ -140,12 +144,14 @@ class _HelpStyleSettingsScreenState extends State<HelpStyleSettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.red.shade50,
+      // AppBar - superior
       appBar: AppBar(
-        title: Text('Cómo Prefiero Recibir Apoyo'),
-        backgroundColor: Colors.red.shade50,
+        title: Text('Preferencia Recibir Apoyo'),
+        backgroundColor: Colors.white,
         foregroundColor: Colors.red.shade700,
         elevation: 0,
         actions: [
+          // Botón de guardar
           TextButton(
             onPressed: _selectedHelpStyle.isNotEmpty ? _saveHelpStyle : null,
             child: Text(
@@ -165,6 +171,7 @@ class _HelpStyleSettingsScreenState extends State<HelpStyleSettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Título y descripción
               Text(
                 '¿Cómo prefieres recibir apoyo en momentos difíciles?',
                 style: GoogleFonts.poppins(
@@ -173,7 +180,10 @@ class _HelpStyleSettingsScreenState extends State<HelpStyleSettingsScreen> {
                   color: Colors.red.shade700,
                 ),
               ),
+              // Espaciado
               SizedBox(height: 8),
+
+              // Descripción
               Text(
                 'Selecciona el estilo de apoyo que mejor se adapte a ti. Esto nos ayuda a personalizar tu experiencia',
                 style: GoogleFonts.poppins(
@@ -181,14 +191,17 @@ class _HelpStyleSettingsScreenState extends State<HelpStyleSettingsScreen> {
                   color: Colors.grey.shade600,
                 ),
               ),
+              // Espaciado
               SizedBox(height: 32),
+
+              // Lista de estilos de ayuda
               Expanded(
                 child: ListView.builder(
                   itemCount: _helpStyles.length,
                   itemBuilder: (context, index) {
                     final style = _helpStyles[index];
                     final isSelected = _selectedHelpStyle == style['key'];
-                    
+
                     return OnboardingListItem(
                       icon: style['icon'],
                       title: style['title'],

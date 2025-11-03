@@ -328,18 +328,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ElevatedButton(
                               onPressed: () async {
                                 Navigator.pop(context);
-                                await FirebaseAuth.instance.signOut();
-                                // Simplemente mostrar snackbar en lugar de navegar
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Sesión cerrada')),
-                                );
+                                final appState = Provider.of<AppState>(context, listen: false);
+                                try {
+                                  await appState.signOut();
+                                  // La redirección automática se maneja por AppState
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Sesión cerrada correctamente')),
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Error al cerrar sesión: ${e.toString()}')),
+                                  );
+                                }
                               },
+                              // Estilo del botón
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.orange[400],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
+                              // Cerrar sesión
                               child: Text(
                                 'Cerrar sesión',
                                 style: GoogleFonts.poppins(color: Colors.white),
@@ -420,25 +429,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     "ELIMINAR") {
                                   try {
                                     Navigator.pop(context);
-                                    final user =
-                                        FirebaseAuth.instance.currentUser;
-                                    await user?.delete();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Cuenta eliminada')),
+                                    final appState = Provider.of<AppState>(context, listen: false);
+                                    
+                                    // Mostrar loading mientras se elimina
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (context) => AlertDialog(
+                                        content: Row(
+                                          children: [
+                                            CircularProgressIndicator(),
+                                            SizedBox(width: 20),
+                                            Text('Eliminando cuenta...'),
+                                          ],
+                                        ),
+                                      ),
                                     );
-                                  } catch (e) {
+                                    
+                                    await appState.deleteAccount();
+                                    
+                                    // Cerrar loading dialog
+                                    Navigator.of(context).pop();
+                                    
+                                    // La redirección a login se maneja automáticamente por AppState
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            "Error al eliminar la cuenta: ${e.toString()}"),
+                                        content: Text('Cuenta eliminada completamente'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    // Cerrar loading dialog si existe
+                                    if (Navigator.canPop(context)) {
+                                      Navigator.of(context).pop();
+                                    }
+                                    
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Error al eliminar la cuenta: ${e.toString()}"),
+                                        backgroundColor: Colors.red,
                                       ),
                                     );
                                   }
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                          "Texto de confirmación incorrecto"),
+                                      content: Text("Texto de confirmación incorrecto"),
+                                      backgroundColor: Colors.orange,
                                     ),
                                   );
                                 }

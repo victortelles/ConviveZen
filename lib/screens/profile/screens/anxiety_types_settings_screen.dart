@@ -6,18 +6,22 @@ import '../../../widgets/onboarding_scaffold.dart';
 
 class AnxietyTypesSettingsScreen extends StatefulWidget {
   @override
-  _AnxietyTypesSettingsScreenState createState() => _AnxietyTypesSettingsScreenState();
+  _AnxietyTypesSettingsScreenState createState() =>
+      _AnxietyTypesSettingsScreenState();
 }
 
-class _AnxietyTypesSettingsScreenState extends State<AnxietyTypesSettingsScreen> {
+class _AnxietyTypesSettingsScreenState
+    extends State<AnxietyTypesSettingsScreen> {
   List<String> _selectedTypes = [];
   bool _isLoading = true;
 
+  // Lista de tipos de ansiedad disponibles
   final List<Map<String, dynamic>> _anxietyTypes = [
     {
       'key': 'generalized',
       'title': 'Ansiedad Generalizada',
-      'description': 'Preocupación constante por diferentes aspectos de la vida',
+      'description':
+          'Preocupación constante por diferentes aspectos de la vida',
       'icon': Icons.psychology,
       'color': Colors.deepPurple,
     },
@@ -64,20 +68,30 @@ class _AnxietyTypesSettingsScreenState extends State<AnxietyTypesSettingsScreen>
     _loadCurrentAnxietyTypes();
   }
 
+  // Método para cargar los tipos de ansiedad actuales del usuario
   void _loadCurrentAnxietyTypes() async {
     final appState = Provider.of<AppState>(context, listen: false);
-    final userProfile = appState.userProfile;
     
     setState(() {
-      if (userProfile != null && userProfile.anxietyTypes.isNotEmpty) {
-        _selectedTypes = List<String>.from(userProfile.anxietyTypes);
-      } else {
-        _selectedTypes = [];
-      }
-      _isLoading = false;
+      _isLoading = true;
     });
+
+    try {
+      final preferences = await appState.getUserPreferences();
+      setState(() {
+        _selectedTypes = List<String>.from(preferences.anxietyTypes);
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading anxiety types: $e');
+      setState(() {
+        _selectedTypes = [];
+        _isLoading = false;
+      });
+    }
   }
 
+  // Método para alternar un tipo de ansiedad seleccionado
   void _toggleAnxietyType(String key) {
     setState(() {
       if (_selectedTypes.contains(key)) {
@@ -88,11 +102,12 @@ class _AnxietyTypesSettingsScreenState extends State<AnxietyTypesSettingsScreen>
     });
   }
 
+  // Método para guardar los tipos de ansiedad seleccionados
   Future<void> _saveAnxietyTypes() async {
     try {
       final appState = Provider.of<AppState>(context, listen: false);
       await appState.updateAnxietyTypes(_selectedTypes);
-      
+
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Tipos de ansiedad actualizados correctamente')),
@@ -107,71 +122,80 @@ class _AnxietyTypesSettingsScreenState extends State<AnxietyTypesSettingsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.pink.shade50,
+      backgroundColor: Colors.purple.shade50,
       appBar: AppBar(
+        // AppBar - superior
         title: Text('Mis Tipos de Ansiedad'),
-        backgroundColor: Colors.pink.shade50,
-        foregroundColor: Colors.pink.shade700,
+        backgroundColor: Colors.purple.shade50,
+        foregroundColor: Colors.purple.shade700,
         elevation: 0,
         actions: [
+          // Botón de guardar
           TextButton(
             onPressed: _selectedTypes.isNotEmpty ? _saveAnxietyTypes : null,
             child: Text(
               'Guardar',
               style: TextStyle(
-                color: _selectedTypes.isNotEmpty ? Colors.pink.shade700 : Colors.grey,
+                color: _selectedTypes.isNotEmpty
+                    ? Colors.purple.shade700
+                    : Colors.grey,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
         ],
       ),
-      body: _isLoading 
-        ? Center(child: CircularProgressIndicator())
-        : Padding(
-          padding: EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '¿Qué tipos de ansiedad experimentas?',
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.pink.shade700,
-                ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Título
+                  Text(
+                    '¿Qué tipos de ansiedad experimentas?',
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.purple.shade700,
+                    ),
+                  ),
+                  // espaciado
+                  SizedBox(height: 8),
+                  // Descripción
+                  Text(
+                    'Puedes seleccionar varios tipos. Esto nos ayuda a personalizar las herramientas más efectivas para ti',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  // espaciado
+                  SizedBox(height: 32),
+                  // Lista de tipos de ansiedad
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _anxietyTypes.length,
+                      itemBuilder: (context, index) {
+                        final type = _anxietyTypes[index];
+                        final isSelected = _selectedTypes.contains(type['key']);
+
+                        return OnboardingListItem(
+                          icon: type['icon'],
+                          title: type['title'],
+                          description: type['description'],
+                          isSelected: isSelected,
+                          onTap: () => _toggleAnxietyType(type['key']),
+                          primaryColor: Colors.deepPurple,
+                          iconColor: type['color'],
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 8),
-              Text(
-                'Puedes seleccionar varios tipos. Esto nos ayuda a personalizar las herramientas más efectivas para ti',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-              SizedBox(height: 32),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _anxietyTypes.length,
-                  itemBuilder: (context, index) {
-                    final type = _anxietyTypes[index];
-                    final isSelected = _selectedTypes.contains(type['key']);
-                    
-                    return OnboardingListItem(
-                      icon: type['icon'],
-                      title: type['title'],
-                      description: type['description'],
-                      isSelected: isSelected,
-                      onTap: () => _toggleAnxietyType(type['key']),
-                      primaryColor: Colors.deepPurple,
-                      iconColor: type['color'],
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
     );
   }
 }

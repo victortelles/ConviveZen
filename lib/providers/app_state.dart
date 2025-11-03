@@ -40,11 +40,42 @@ class AppState with ChangeNotifier {
     setLoading(true);
     try {
       _userProfile = await _firestoreService.getUserById(_currentUser!.uid);
+
+      // Ejecutar migración de datos duplicados solo si es necesario
+      await _checkAndMigrateDuplicatedData();
+
       notifyListeners();
     } catch (e) {
       print('Error loading user profile: $e');
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Verificar y migrar datos duplicados si es necesario
+  Future<void> _checkAndMigrateDuplicatedData() async {
+    if (_currentUser == null) return;
+
+    try {
+      // Verificar si existen datos duplicados en el documento del usuario
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .get();
+
+      if (!userDoc.exists) return;
+
+      final userData = userDoc.data()!;
+
+      // Si hay campos duplicados, ejecutar migración
+      if (userData.containsKey('anxietyTypes') ||
+          userData.containsKey('triggers') ||
+          userData.containsKey('personalityType')) {
+        print('🔄 Detectados datos duplicados, ejecutando migración...');
+        await migrateDuplicatedDataToPreferences();
+      }
+    } catch (e) {
+      print('Error verificando datos duplicados: $e');
     }
   }
 
@@ -182,7 +213,8 @@ class AppState with ChangeNotifier {
   }
 
   // Guardar preferencias de usuario en Firestore
-  Future<void> saveUserPreferencesToFirestore(UserPreferences preferences) async {
+  Future<void> saveUserPreferencesToFirestore(
+      UserPreferences preferences) async {
     if (_currentUser == null) return;
 
     setLoading(true);
@@ -203,36 +235,19 @@ class AppState with ChangeNotifier {
     }
   }
 
-  // Método para actualizar tipos de ansiedad en el perfil del usuario
+  // Método para actualizar tipos de ansiedad en las preferencias del usuario
   Future<void> updateAnxietyTypes(List<String> anxietyTypes) async {
-    if (_currentUser == null || _userProfile == null) return;
+    if (_currentUser == null) return;
 
     setLoading(true);
     try {
-      await _firestoreService.updateUser(_currentUser!.uid, {
-        'anxietyTypes': anxietyTypes,
-      });
-
-      // Actualizar el perfil local
-      _userProfile = UserModel(
-        uid: _userProfile!.uid,
-        email: _userProfile!.email,
-        name: _userProfile!.name,
-        profilePic: _userProfile!.profilePic,
-        authProvider: _userProfile!.authProvider,
-        isActive: _userProfile!.isActive,
-        isFirstTime: _userProfile!.isFirstTime,
-        createdAt: _userProfile!.createdAt,
-        birthdate: _userProfile!.birthdate,
+      UserPreferences currentPrefs = await getUserPreferences();
+      UserPreferences updatedPrefs = currentPrefs.copyWith(
         anxietyTypes: anxietyTypes,
-        anxietyLevel: _userProfile!.anxietyLevel,
-        personalityType: _userProfile!.personalityType,
-        triggers: _userProfile!.triggers,
-        hasSubscription: _userProfile!.hasSubscription,
-        subscriptionExpiry: _userProfile!.subscriptionExpiry,
+        lastUpdated: DateTime.now(),
       );
 
-      notifyListeners();
+      await saveUserPreferencesToFirestore(updatedPrefs);
     } catch (e) {
       print('Error updating anxiety types: $e');
       throw e;
@@ -346,22 +361,83 @@ class AppState with ChangeNotifier {
     }
   }
 
-  // Agregar eventos
+  // Método para migrar datos duplicados de document a preferences (solo usar una vez)
+  Future<void> migrateDuplicatedDataToPreferences() async {
+    if (_currentUser == null || _userProfile == null) return;
 
-  final List<Event> _eventos = [];
+    try {
+      // Obtener datos actuales del documento del usuario que pueden estar duplicados
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .get();
 
-  List<Event> get eventos => List.unmodifiable(_eventos);
+      if (!userDoc.exists) return;
 
-  void agregarEvento(Event evento) {
-    _eventos.add(evento);
-    notifyListeners();
+      final userData = userDoc.data()!;
+
+      // Obtener preferencias actuales
+      UserPreferences currentPrefs = await getUserPreferences();
+
+      // Migrar datos solo si existen en el documento del usuario y no en preferences
+      UserPreferences updatedPrefs = currentPrefs.copyWith(
+        anxietyTypes: userData['anxietyTypes'] != null &&
+                currentPrefs.anxietyTypes.isEmpty
+            ? List<String>.from(userData['anxietyTypes'])
+            : currentPrefs.anxietyTypes,
+        triggers: userData['triggers'] != null && currentPrefs.triggers.isEmpty
+            ? List<String>.from(userData['triggers'])
+            : currentPrefs.triggers,
+        personalityType: userData['personalityType'] != null &&
+                currentPrefs.personalityType == null
+            ? userData['personalityType']
+            : currentPrefs.personalityType,
+        lastUpdated: DateTime.now(),
+      );
+
+      // Guardar en preferences
+      await saveUserPreferencesToFirestore(updatedPrefs);
+
+      // Limpiar campos duplicados del documento del usuario
+      await _firestoreService.updateUser(_currentUser!.uid, {
+        'anxietyTypes': FieldValue.delete(),
+        'triggers': FieldValue.delete(),
+        'personalityType': FieldValue.delete(),
+      });
+
+      print('Migración de datos duplicados completada');
+    } catch (e) {
+      print('Error en migración de datos: $e');
+    }
   }
-}
 
-class Event {
-  final String summary;
-  final String location;
-  final DateTime start;
+  // Método para eliminar cuenta completamente
+  Future<void> deleteAccount() async {
+    if (_currentUser == null) {
+      throw Exception('No hay usuario autenticado');
+    }
 
-  Event({required this.summary, required this.location, required this.start});
+    setLoading(true);
+    try {
+      final uid = _currentUser!.uid;
+
+      // 1. Eliminar todos los datos de Firestore
+      await _firestoreService.deleteUser(uid);
+
+      // 2. Eliminar cuenta de Firebase Auth
+      await _currentUser!.delete();
+
+      // 3. Limpiar estado local
+      _currentUser = null;
+      _userProfile = null;
+      notifyListeners();
+
+      print('Cuenta eliminada completamente');
+    } catch (e) {
+      print('Error eliminando cuenta: $e');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  }
 }
