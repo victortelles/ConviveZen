@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/app_state.dart';
 import '../profile/profile.dart';
+import '../music/music_screen.dart';
 import 'widgets/emergency_button.dart';
 import 'widgets/emergency_tools_modal.dart';
 import 'widgets/home_header.dart';
@@ -96,8 +97,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _launchMusic() {
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Música relajante próximamente')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MusicScreen(),
+      ),
     );
   }
 

@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -43,6 +44,34 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        
+        <!-- Queries para apps de musica (Android 11+) -->
+        <!-- Spotify -->
+        <package android:name="com.spotify.music" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="spotify" />
+        </intent>
+        
+        <!-- YouTube Music -->
+        <package android:name="com.google.android.apps.youtube.music" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" android:host="music.youtube.com" />
+        </intent>
+        
+        <!-- Apple Music -->
+        <package android:name="com.apple.android.music" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="music" />
+        </intent>
+        
+        <!-- Intent generico para abrir URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
         </intent>
     </queries>
 </manifest>
