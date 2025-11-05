@@ -13,91 +13,24 @@ class _HobbiesSettingsScreenState extends State<HobbiesSettingsScreen> {
   List<String> _selectedHobbies = [];
   bool _isLoading = true;
 
+  // Lista completa de hobbies (identica a onboarding)
   final List<Map<String, dynamic>> _hobbies = [
-    {
-      'key': 'reading',
-      'title': 'Lectura',
-      'description': 'Leer libros, revistas o artículos',
-      'icon': Icons.book,
-      'color': Colors.brown,
-    },
-    {
-      'key': 'yoga',
-      'title': 'Yoga',
-      'description': 'Práctica de posturas y respiración',
-      'icon': Icons.self_improvement,
-      'color': Colors.purple,
-    },
-    {
-      'key': 'meditation',
-      'title': 'Meditación',
-      'description': 'Práctica de mindfulness y relajación',
-      'icon': Icons.spa,
-      'color': Colors.deepPurple,
-    },
-    {
-      'key': 'walking',
-      'title': 'Caminar',
-      'description': 'Paseos relajantes al aire libre',
-      'icon': Icons.directions_walk,
-      'color': Colors.green,
-    },
-    {
-      'key': 'gardening',
-      'title': 'Jardinería',
-      'description': 'Cuidar plantas y jardines',
-      'icon': Icons.local_florist,
-      'color': Colors.lightGreen,
-    },
-    {
-      'key': 'painting',
-      'title': 'Pintura/Dibujo',
-      'description': 'Expresión artística y creatividad',
-      'icon': Icons.brush,
-      'color': Colors.orange,
-    },
-    {
-      'key': 'cooking',
-      'title': 'Cocinar',
-      'description': 'Preparar comidas y experimentar recetas',
-      'icon': Icons.restaurant,
-      'color': Colors.red,
-    },
-    {
-      'key': 'music',
-      'title': 'Tocar Instrumentos',
-      'description': 'Guitarra, piano u otros instrumentos',
-      'icon': Icons.piano,
-      'color': Colors.blue,
-    },
-    {
-      'key': 'crafts',
-      'title': 'Manualidades',
-      'description': 'Tejido, costura, trabajos manuales',
-      'icon': Icons.construction,
-      'color': Colors.amber,
-    },
-    {
-      'key': 'photography',
-      'title': 'Fotografía',
-      'description': 'Capturar momentos y paisajes',
-      'icon': Icons.camera_alt,
-      'color': Colors.teal,
-    },
-    {
-      'key': 'writing',
-      'title': 'Escritura',
-      'description': 'Diario personal, poesía o cuentos',
-      'icon': Icons.edit,
-      'color': Colors.indigo,
-    },
-    {
-      'key': 'puzzles',
-      'title': 'Rompecabezas',
-      'description': 'Sudoku, crucigramas, puzzles',
-      'icon': Icons.extension,
-      'color': Colors.cyan,
-    },
+    {'key': 'reading', 'title': 'Lectura', 'description': 'Leer libros, revistas y artículos', 'icon': Icons.book, 'color': Colors.brown},
+    {'key': 'music', 'title': 'Música', 'description': 'Escuchar o crear música', 'icon': Icons.music_note, 'color': Colors.blue},
+    {'key': 'sports', 'title': 'Deportes', 'description': 'Actividades físicas y ejercicio', 'icon': Icons.sports_soccer, 'color': Colors.green},
+    {'key': 'art', 'title': 'Arte y Dibujo', 'description': 'Expresión artística y creativa', 'icon': Icons.palette, 'color': Colors.orange},
+    {'key': 'cooking', 'title': 'Cocinar', 'description': 'Preparar comidas y experimentar con recetas', 'icon': Icons.restaurant, 'color': Colors.red},
+    {'key': 'gaming', 'title': 'Videojuegos', 'description': 'Juegos digitales y entretenimiento', 'icon': Icons.sports_esports, 'color': Colors.deepPurple},
+    {'key': 'nature', 'title': 'Naturaleza', 'description': 'Actividades al aire libre', 'icon': Icons.nature, 'color': Colors.lightGreen},
+    {'key': 'photography', 'title': 'Fotografía', 'description': 'Capturar momentos y paisajes', 'icon': Icons.camera_alt, 'color': Colors.teal},
+    {'key': 'dancing', 'title': 'Bailar', 'description': 'Expresión corporal y movimiento', 'icon': Icons.music_video, 'color': Colors.pink},
+    {'key': 'writing', 'title': 'Escribir', 'description': 'Crear textos, historias o diarios', 'icon': Icons.edit, 'color': Colors.indigo},
+    {'key': 'travel', 'title': 'Viajar', 'description': 'Explorar nuevos lugares', 'icon': Icons.flight, 'color': Colors.cyan},
+    {'key': 'crafts', 'title': 'Manualidades', 'description': 'Crear objetos con las manos', 'icon': Icons.handyman, 'color': Colors.amber},
+    {'key': 'movies', 'title': 'Películas/Series', 'description': 'Entretenimiento audiovisual', 'icon': Icons.movie, 'color': Colors.deepOrange},
+    {'key': 'meditation', 'title': 'Meditación', 'description': 'Prácticas de mindfulness y relajación', 'icon': Icons.self_improvement, 'color': Colors.deepPurple},
+    {'key': 'socializing', 'title': 'Socializar', 'description': 'Pasar tiempo con amigos y familia', 'icon': Icons.people, 'color': Colors.purple},
+    {'key': 'learning', 'title': 'Aprender cosas nuevas', 'description': 'Cursos, talleres y educación continua', 'icon': Icons.school, 'color': Colors.blueGrey},
   ];
 
   @override

@@ -71,12 +71,19 @@ class _MusicScreenState extends State<MusicScreen> {
     print('_autoLaunched: $_autoLaunched');
     print('musicGenres: ${preferences.musicGenres}');
     print('musicGenres.length: ${preferences.musicGenres.length}');
-    
+    print('anxietyTypes: ${preferences.anxietyTypes}');
+
     if (!_autoLaunched && preferences.musicGenres.isNotEmpty) {
       _autoLaunched = true;
-      _selectedGenre = preferences.musicGenres.first;
-      print('Genero seleccionado: $_selectedGenre');
-      
+
+      // Usar algoritmo de scoring para seleccionar el mejor genero
+      _selectedGenre = MusicService.selectBestMusicGenre(
+        preferences.musicGenres,
+        preferences.anxietyTypes,
+      );
+
+      print('Genero seleccionado por algoritmo: $_selectedGenre');
+
       // Esperar un momento antes de abrir
       await Future.delayed(Duration(milliseconds: 500));
       await _openMusicApp(_selectedGenre!);
@@ -141,7 +148,7 @@ class _MusicScreenState extends State<MusicScreen> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 10),
-                      
+
                       // Debug info
                       if (preferences.musicGenres.isNotEmpty)
                         Text(

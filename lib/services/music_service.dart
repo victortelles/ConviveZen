@@ -31,6 +31,127 @@ class MusicService {
     'lofi': 'lofi chill beats',
   };
 
+  // Mapeo de tipos de ansiedad a generos musicales con scoring (1-5)
+  // Basado en investigacion de musicoterapia y efectividad terapeutica
+  static const Map<String, Map<String, int>> _anxietyToMusicScoring = {
+    'generalized': {
+      'Ambient': 5,
+      'Meditación': 5,
+      'Clásica': 4,
+      'Lo-Fi Hip Hop': 4,
+      'Instrumental': 4,
+      'Sonidos de la naturaleza': 4,
+      'Jazz suave': 3,
+      'Bossa Nova': 3,
+      'New Age': 4,
+      'Chill-out': 3,
+      'Downtempo': 3,
+    },
+    'social': {
+      'Lo-Fi Hip Hop': 5,
+      'Instrumental': 4,
+      'Ambient': 4,
+      'Clásica': 3,
+      'Jazz suave': 3,
+      'Electronic': 3,
+      'Bossa Nova': 3,
+      'Chill-out': 4,
+    },
+    'panic': {
+      'Meditación': 5,
+      'Sonidos de la naturaleza': 5,
+      'Frecuencias binaurales': 5,
+      'Ambient': 4,
+      'Clásica': 4,
+      'Música para dormir': 4,
+      'Instrumental': 3,
+      'New Age': 4,
+      'Cantos gregorianos': 3,
+    },
+    'specific': {
+      'Meditación': 4,
+      'Clásica': 4,
+      'Ambient': 4,
+      'Instrumental': 3,
+      'Sonidos de la naturaleza': 3,
+      'New Age': 3,
+    },
+    'performance': {
+      'Clásica': 5,
+      'Música para concentrarse': 5,
+      'Lo-Fi Hip Hop': 4,
+      'Jazz suave': 4,
+      'Instrumental': 4,
+      'Ambient': 3,
+      'Electronic': 3,
+      'Bossa Nova': 3,
+    },
+    'mixed': {
+      'Ambient': 4,
+      'Meditación': 4,
+      'Clásica': 4,
+      'Lo-Fi Hip Hop': 3,
+      'Instrumental': 3,
+      'Sonidos de la naturaleza': 3,
+    },
+  };
+
+  // Algoritmo para seleccionar el mejor genero musical segun tipos de ansiedad
+  static String selectBestMusicGenre(
+    List<String> userMusicGenres,
+    List<String> userAnxietyTypes,
+  ) {
+    print('=== MusicService.selectBestMusicGenre ===');
+    print('Generos del usuario: $userMusicGenres');
+    print('Tipos de ansiedad: $userAnxietyTypes');
+
+    // Si no hay generos seleccionados, retornar el primero por defecto
+    if (userMusicGenres.isEmpty) {
+      print('No hay generos seleccionados, usando Ambient por defecto');
+      return 'Ambient';
+    }
+
+    // Si no hay tipos de ansiedad, retornar el primer genero
+    if (userAnxietyTypes.isEmpty) {
+      print('No hay tipos de ansiedad, usando primer genero: ${userMusicGenres.first}');
+      return userMusicGenres.first;
+    }
+
+    // Calcular score para cada genero del usuario
+    Map<String, int> genreScores = {};
+    
+    for (String genre in userMusicGenres) {
+      int score = 0;
+      
+      // Sumar pesos segun cada tipo de ansiedad del usuario
+      for (String anxietyType in userAnxietyTypes) {
+        if (_anxietyToMusicScoring.containsKey(anxietyType)) {
+          final anxietyMapping = _anxietyToMusicScoring[anxietyType]!;
+          if (anxietyMapping.containsKey(genre)) {
+            score += anxietyMapping[genre]!;
+          }
+        }
+      }
+      
+      genreScores[genre] = score;
+      print('Genero: $genre, Score: $score');
+    }
+
+    // Retornar el genero con mayor score
+    if (genreScores.isEmpty || genreScores.values.every((score) => score == 0)) {
+      print('Ningun genero tiene score, usando primer genero: ${userMusicGenres.first}');
+      return userMusicGenres.first;
+    }
+
+    // Encontrar el genero con mayor puntuacion
+    String bestGenre = genreScores.entries
+        .reduce((a, b) => a.value > b.value ? a : b)
+        .key;
+    
+    print('Mejor genero seleccionado: $bestGenre (Score: ${genreScores[bestGenre]})');
+    return bestGenre;
+  }
+
   // Detectar y abrir app de musica segun genero
   static Future<bool> openMusicAppWithGenre(String genre) async {
     print('=== MusicService.openMusicAppWithGenre ===');

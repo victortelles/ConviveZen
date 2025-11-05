@@ -147,6 +147,81 @@ lib/
 3. Si no está instalada, intentar con Spotify.
 4. Si ninguna está instalada, mostrar mensaje de error.
 
+-----------------------------------------------------------
+
+## Fase: Unificacion de listas y algoritmo de seleccion inteligente
+
+### Objetivo
+Unificar las listas de opciones entre onboarding y profile para asegurar consistencia en los datos de Firebase, e implementar un algoritmo inteligente que seleccione el genero musical mas efectivo segun los tipos de ansiedad del usuario.
+
+#### Mapeo Ansiedad → Generos (Scoring 1-5)
+Basado en investigacion de musicoterapia y efectividad terapeutica:
+
+**Ansiedad Generalizada** (preocupacion constante):
+- Ambient: 5 (reduce activacion cognitiva)
+- Meditacion: 5 (promueve mindfulness)
+- Clasica: 4 (efecto Mozart, reduce cortisol)
+- Lo-Fi Hip Hop: 4 (ritmo constante, sin letra distrae)
+- Instrumental: 4 (sin letra, evita sobrecarga cognitiva)
+- Jazz suave: 3 (relajante pero requiere atencion)
+- Sonidos de la naturaleza: 4 (efecto biofilia)
+
+**Ansiedad Social** (miedo a interacciones):
+- Lo-Fi Hip Hop: 5 (favorito en comunidad, no invasivo)
+- Instrumental: 4 (sin letra, menos exposicion emocional)
+- Ambient: 4 (crea espacio seguro mental)
+- Clasica: 3 (puede sentirse formal/expuesto)
+- Jazz suave: 3 (asociado a contextos sociales)
+- Electronica: 3 (ritmo predecible, sensacion control)
+
+**Ataques de Panico** (sintomas fisicos intensos):
+- Meditacion: 5 (diseñada para crisis)
+- Sonidos de la naturaleza: 5 (grounding, conexion presente)
+- Frecuencias binaurales: 5 (efecto fisiologico directo)
+- Ambient: 4 (reduce hiperarousal)
+- Clasica: 4 (efecto calmante cardiovascular)
+- Musica para dormir: 4 (induce respuesta parasimpatica)
+- Instrumental: 3 (util pero menos especifico)
+
+**Fobias Especificas** (miedo a objetos/situaciones):
+- Meditacion: 4 (tecnicas de exposicion gradual)
+- Clasica: 4 (distraccion cognitiva efectiva)
+- Ambient: 4 (crea ambiente seguro)
+- Instrumental: 3 (distraccion moderada)
+- Sonidos de la naturaleza: 3 (puede ayudar segun fobia)
+
+**Ansiedad de Rendimiento** (evaluaciones/presentaciones):
+- Clasica: 5 (mejora concentracion, reduce cortisol)
+- Lo-Fi Hip Hop: 4 (mejora focus, ritmo productivo)
+- Jazz suave: 4 (estimula creatividad sin distraer)
+- Instrumental: 4 (mantiene alerta sin ansiedad)
+- Musica para concentrarse: 5 (diseñada para performance)
+- Ambient: 3 (puede ser demasiado relajante)
+
+**Ansiedad Mixta/Combinada**:
+- Ambient: 4 (versatil, efectivo general)
+- Meditacion: 4 (aborda multiples sintomas)
+- Clasica: 4 (beneficios amplios)
+- Lo-Fi Hip Hop: 3 (popular, accesible)
+- Instrumental: 3 (seguro, neutral)
+
+### Implementacion tecnica
+
+**Estructura del algoritmo:**
+```dart
+// 1. Obtener generos del usuario y tipos de ansiedad
+// 2. Calcular score para cada genero
+// 3. Retornar genero con mayor puntuacion
+// 4. En caso de empate, usar orden de preferencia del usuario
+```
+
+**Archivos a modificar:**
+- `lib/services/music_service.dart` - Añadir mapeo y algoritmo
+- `lib/screens/music/music_screen.dart` - Usar algoritmo en auto-launch
+- `lib/data/anxiety_music_mapping.dart` - (opcional) Centralizar mapeo
+
+-----------------------------------------------------------
+
 ## Reglas
 - El codigo del proyecto tiene que ser en inglés (nombres de variables, funciones, clases en English).
 - Los comentarios deben de ser breves en español (widget [nombre] logica de login, perfil etc...), sin exceso de comentario unicamente en puntos clave para identificar.
