@@ -71,7 +71,7 @@ class EmergencyToolsModal extends StatelessWidget {
                 crossAxisSpacing: 15,
                 children: [
                   EmergencyToolButton(
-                    title: 'Respiración Guiada',
+                    title: 'Ejercicio de Respiración',
                     subtitle: 'Calma inmediata',
                     icon: Icons.air,
                     color: Colors.blue.shade300,
@@ -79,7 +79,7 @@ class EmergencyToolsModal extends StatelessWidget {
                     onTap: onBreathingExercise,
                   ),
                   EmergencyToolButton(
-                    title: 'Meditación Rápida',
+                    title: 'Meditación Guiada',
                     subtitle: '3-5 minutos',
                     icon: Icons.self_improvement,
                     color: Colors.purple.shade300,
@@ -109,6 +109,14 @@ class EmergencyToolsModal extends StatelessWidget {
                     },
                   ),
                   EmergencyToolButton(
+                    title: 'Contactos de Emergencia',
+                    subtitle: 'Llama a alguien de confianza',
+                    icon: Icons.phone,
+                    color: Colors.red.shade300,
+                    isPremium: false,
+                    onTap: onEmergencyContacts,
+                  ),
+                  EmergencyToolButton(
                     title: 'Chat de Apoyo',
                     subtitle: 'IA compasiva',
                     icon: Icons.chat_bubble_outline,
@@ -118,14 +126,6 @@ class EmergencyToolsModal extends StatelessWidget {
                       Navigator.pop(context);
                       onShowPremiumDialog('Chat de Apoyo');
                     },
-                  ),
-                  EmergencyToolButton(
-                    title: 'Contactos de Emergencia',
-                    subtitle: 'Llama a alguien de confianza',
-                    icon: Icons.phone,
-                    color: Colors.red.shade300,
-                    isPremium: false,
-                    onTap: onEmergencyContacts,
                   ),
                 ],
               ),
