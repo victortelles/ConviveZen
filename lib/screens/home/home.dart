@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../providers/app_state.dart';
+import '../../models/crisis_log.dart';
+import '../../services/crisis_log_service.dart';
 import '../profile/profile.dart';
 import '../music/music_screen.dart';
 import '../contacts/emergency_contacts_screen.dart';
@@ -9,6 +12,7 @@ import 'widgets/emergency_button.dart';
 import 'widgets/emergency_tools_modal.dart';
 import 'widgets/home_header.dart';
 import 'widgets/premium_feature_dialog.dart';
+import 'widgets/crisis_feedback_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -20,6 +24,9 @@ class _HomeScreenState extends State<HomeScreen>
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
   bool _isEmergencyMode = false;
+  CrisisLog? _activeCrisisLog;
+  final CrisisLogService _crisisLogService = CrisisLogService();
+  List<String> _usedTools = [];
 
   @override
   void initState() {
@@ -47,7 +54,31 @@ class _HomeScreenState extends State<HomeScreen>
   Future<void> _activateEmergencyMode() async {
     setState(() {
       _isEmergencyMode = true;
+      _usedTools = [];
     });
+    
+    // Crear log de crisis
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final logId = await _crisisLogService.createCrisisLog(
+          CrisisLog(
+            id: '',
+            userId: user.uid,
+            anxietyLevelBefore: 7, // Default, se puede mejorar con un diálogo previo
+            triggerType: 'unknown',
+          ),
+        );
+        
+        final log = await _crisisLogService.getActiveCrisisLog(user.uid);
+        setState(() {
+          _activeCrisisLog = log;
+        });
+      } catch (e) {
+        print('Error creating crisis log: $e');
+      }
+    }
+    
     _showEmergencyTools();
   }
 
@@ -56,6 +87,8 @@ class _HomeScreenState extends State<HomeScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      isDismissible: false, // No permitir cerrar sin seleccionar
+      enableDrag: false, // No permitir arrastrar para cerrar
       builder: (context) => EmergencyToolsModal(
         onBreathingExercise: _launchBreathingExercise,
         onMeditation: _launchMeditation,
@@ -63,12 +96,7 @@ class _HomeScreenState extends State<HomeScreen>
         onGames: _launchGames,
         onAIChat: _launchAIChat,
         onEmergencyContacts: _showEmergencyContacts,
-        onFeelBetter: () {
-          setState(() {
-            _isEmergencyMode = false;
-          });
-          Navigator.pop(context);
-        },
+        onFeelBetter: null, // Removido - se manejará con el diálogo
         onShowPremiumDialog: _showPremiumFeatureDialog,
       ),
     );
@@ -85,16 +113,18 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _launchBreathingExercise() {
     Navigator.pop(context);
+    _trackToolUsage('breathing');
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BreathingExerciseScreen(),
       ),
-    );
+    ).then((_) => _checkIfNeedsMoreHelp());
   }
 
   void _launchMeditation() {
     Navigator.pop(context);
+    _trackToolUsage('meditation');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Meditación próximamente')),
     );
@@ -102,16 +132,18 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _launchMusic() {
     Navigator.pop(context);
+    _trackToolUsage('music');
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MusicScreen(),
       ),
-    );
+    ).then((_) => _checkIfNeedsMoreHelp());
   }
 
   void _launchGames() {
     Navigator.pop(context);
+    _trackToolUsage('games');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Juegos calmantes próximamente')),
     );
@@ -119,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _launchAIChat() {
     Navigator.pop(context);
+    _trackToolUsage('ai_chat');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Chat de apoyo próximamente')),
     );
@@ -126,12 +159,81 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _showEmergencyContacts() {
     Navigator.pop(context);
+    _trackToolUsage('emergency_contacts');
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EmergencyContactsScreen(isEmergencyMode: true),
       ),
+    ).then((_) => _checkIfNeedsMoreHelp());
+  }
+
+  // Registrar uso de herramienta
+  void _trackToolUsage(String toolType) {
+    if (!_usedTools.contains(toolType)) {
+      setState(() {
+        _usedTools.add(toolType);
+      });
+    }
+    
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _crisisLogService.addToolToActiveLog(user.uid, toolType);
+    }
+  }
+
+  // Verificar si el usuario necesita más ayuda después de usar una herramienta
+  void _checkIfNeedsMoreHelp() {
+    if (!_isEmergencyMode) return;
+    
+    // Pequeño delay para que el usuario regrese a la pantalla
+    Future.delayed(Duration(milliseconds: 500), () {
+      if (mounted && _isEmergencyMode) {
+        _showCrisisFeedbackDialog();
+      }
+    });
+  }
+
+  // Mostrar diálogo de feedback post-herramienta
+  void _showCrisisFeedbackDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => CrisisFeedbackDialog(
+        toolsUsed: _usedTools,
+        onFeelBetter: _handleFeelBetter,
+        onNeedMoreHelp: _handleNeedMoreHelp,
+      ),
     );
+  }
+
+  // Usuario se siente mejor - completar crisis log
+  Future<void> _handleFeelBetter(int anxietyLevel, String? primaryTool, bool wasHelpful) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && _activeCrisisLog != null) {
+      try {
+        await _crisisLogService.completeActiveCrisisLog(
+          userId: user.uid,
+          anxietyLevelAfter: anxietyLevel,
+          primaryToolUsed: primaryTool,
+          wasHelpful: wasHelpful,
+        );
+      } catch (e) {
+        print('Error completing crisis log: $e');
+      }
+    }
+    
+    setState(() {
+      _isEmergencyMode = false;
+      _activeCrisisLog = null;
+      _usedTools = [];
+    });
+  }
+
+  // Usuario necesita más ayuda - reabrir menú de herramientas
+  void _handleNeedMoreHelp() {
+    Navigator.pop(context); // Cerrar diálogo de feedback
+    _showEmergencyTools(); // Reabrir menú de herramientas
   }
 
   @override

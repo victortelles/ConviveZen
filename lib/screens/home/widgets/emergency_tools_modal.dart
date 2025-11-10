@@ -8,7 +8,7 @@ class EmergencyToolsModal extends StatelessWidget {
   final VoidCallback onGames;
   final VoidCallback onAIChat;
   final VoidCallback onEmergencyContacts;
-  final VoidCallback onFeelBetter;
+  final VoidCallback? onFeelBetter; // Ahora opcional
   final Function(String) onShowPremiumDialog;
 
   const EmergencyToolsModal({
@@ -19,7 +19,7 @@ class EmergencyToolsModal extends StatelessWidget {
     required this.onGames,
     required this.onAIChat,
     required this.onEmergencyContacts,
-    required this.onFeelBetter,
+    this.onFeelBetter, // Opcional
     required this.onShowPremiumDialog,
   }) : super(key: key);
 
@@ -131,30 +131,32 @@ class EmergencyToolsModal extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: onFeelBetter,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink.shade400,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+          // Botón "Me siento mejor" solo si se proporciona el callback
+          if (onFeelBetter != null)
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: onFeelBetter,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pink.shade400,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
-                ),
-                child: Text(
-                  'Me siento mejor',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  child: Text(
+                    'Me siento mejor',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

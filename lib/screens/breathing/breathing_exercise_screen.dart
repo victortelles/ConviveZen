@@ -26,6 +26,7 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
   late Animation<double> _breathAnimation;
   late Animation<double> _pulseAnimation;
 
+  bool _showingIntro = true;
   bool _isStarted = false;
   bool _isPaused = false;
   bool _isCompleted = false;
@@ -33,6 +34,7 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
   int _currentCycle = 0;
   int _currentPhaseIndex = 0;
   int _remainingSeconds = 0;
+  int _introCountdown = 3; // Countdown: Preparado... Listo... Empecemos!
   Timer? _timer;
 
   @override
@@ -62,10 +64,25 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    // Iniciar ejercicio automáticamente después de mostrar un breve mensaje
-    Future.delayed(Duration(milliseconds: 500), () {
+    // Mostrar pantalla introductoria con countdown
+    _startIntroCountdown();
+  }
+
+  // Iniciar countdown de introducción
+  void _startIntroCountdown() {
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
       if (mounted) {
-        _startExercise();
+        setState(() {
+          _introCountdown--;
+        });
+
+        if (_introCountdown <= 0) {
+          timer.cancel();
+          setState(() {
+            _showingIntro = false;
+          });
+          _startExercise();
+        }
       }
     });
   }
@@ -82,7 +99,7 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _getBackgroundColor(),
-      appBar: AppBar(
+      appBar: _showingIntro ? null : AppBar(
         title: Text(
           _currentExercise.name,
           style: GoogleFonts.poppins(
@@ -106,9 +123,126 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
         ],
       ),
       body: SafeArea(
-        child: _isCompleted ? _buildCompletionScreen() : _buildExerciseScreen(),
+        child: _showingIntro 
+            ? _buildIntroScreen() 
+            : (_isCompleted ? _buildCompletionScreen() : _buildExerciseScreen()),
       ),
     );
+  }
+
+  // Pantalla introductoria de preparación
+  Widget _buildIntroScreen() {
+    String message;
+    String emoji;
+    
+    switch (_introCountdown) {
+      case 3:
+        message = 'Preparado...';
+        emoji = '🧘';
+        break;
+      case 2:
+        message = 'Listo...';
+        emoji = '💙';
+        break;
+      case 1:
+        message = '¡Empecemos!';
+        emoji = '✨';
+        break;
+      default:
+        message = 'Respira...';
+        emoji = '🌟';
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.blue.shade300,
+            Colors.blue.shade100,
+          ],
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Emoji animado
+            TweenAnimationBuilder<double>(
+              duration: Duration(milliseconds: 500),
+              tween: Tween(begin: 0.8, end: 1.0),
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: value,
+                  child: Text(
+                    emoji,
+                    style: TextStyle(fontSize: 80),
+                  ),
+                );
+              },
+            ),
+            
+            SizedBox(height: 40),
+            
+            // Título del ejercicio
+            Text(
+              _currentExercise.name,
+              style: GoogleFonts.poppins(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            
+            SizedBox(height: 20),
+            
+            // Mensaje de preparación
+            Text(
+              message,
+              style: GoogleFonts.poppins(
+                fontSize: 32,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                letterSpacing: 1.2,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            
+            SizedBox(height: 40),
+            
+            // Frases calmantes
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                _getCalmingPhrase(),
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.white.withOpacity(0.9),
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Obtener frase calmante según el countdown
+  String _getCalmingPhrase() {
+    switch (_introCountdown) {
+      case 3:
+        return 'Encuentra un lugar cómodo y relájate';
+      case 2:
+        return 'Vamos a respirar juntos, con calma';
+      case 1:
+        return 'Todo va a estar bien';
+      default:
+        return 'Respira profundo';
+    }
   }
 
   // Pantalla del ejercicio
