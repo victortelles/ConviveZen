@@ -115,37 +115,39 @@ class _AddContactDialogState extends State<AddContactDialog> {
                   ),
                 ),
                 SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _relationshipOptions.map((option) {
-                    final isSelected = _selectedRelationship == option['value'];
-                    return ChoiceChip(
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            option['icon'],
-                            size: 18,
-                            color: isSelected ? Colors.white : Colors.grey.shade700,
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.pink.shade100),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedRelationship,
+                      icon: Icon(Icons.arrow_drop_down, color: Colors.pink.shade400),
+                      isExpanded: true,
+                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey.shade800),
+                      items: _relationshipOptions.map((option) {
+                        return DropdownMenuItem<String>(
+                          value: option['value'],
+                          child: Row(
+                            children: [
+                              Icon(option['icon'], color: Colors.pink.shade400, size: 20),
+                              SizedBox(width: 8),
+                              Text(option['label'], style: GoogleFonts.poppins(fontSize: 14)),
+                            ],
                           ),
-                          SizedBox(width: 4),
-                          Text(option['label']),
-                        ],
-                      ),
-                      selected: isSelected,
-                      onSelected: (selected) {
+                        );
+                      }).toList(),
+                      onChanged: (value) {
                         setState(() {
-                          _selectedRelationship = option['value'];
+                          _selectedRelationship = value!;
                         });
                       },
-                      selectedColor: Colors.pink.shade400,
-                      labelStyle: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: isSelected ? Colors.white : Colors.grey.shade700,
-                      ),
-                    );
-                  }).toList(),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16),
 

@@ -14,7 +14,8 @@ class BreathingExerciseScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _BreathingExerciseScreenState createState() => _BreathingExerciseScreenState();
+  _BreathingExerciseScreenState createState() =>
+      _BreathingExerciseScreenState();
 }
 
 class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
@@ -37,9 +38,10 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
   @override
   void initState() {
     super.initState();
-    
+
     // Seleccionar ejercicio (aleatorio si no se proporciona)
-    _currentExercise = widget.exercise ?? BreathingExercises.getRandomExercise();
+    _currentExercise =
+        widget.exercise ?? BreathingExercises.getRandomExercise();
 
     // Configurar controladores de animación
     _breathController = AnimationController(
@@ -111,7 +113,7 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
       children: [
         // Indicador de progreso
         _buildProgressIndicator(),
-        
+
         Expanded(
           child: Center(
             child: Column(
@@ -119,19 +121,19 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               children: [
                 // Animación de respiración
                 _buildBreathingAnimation(),
-                
+
                 SizedBox(height: 40),
-                
+
                 // Instrucción actual
                 _buildCurrentInstruction(),
-                
+
                 SizedBox(height: 20),
-                
+
                 // Contador de tiempo
                 _buildTimeCounter(),
-                
+
                 SizedBox(height: 40),
-                
+
                 // Botones de control
                 _buildControlButtons(),
               ],
@@ -188,9 +190,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               ),
             ),
           ),
-          
+
           SizedBox(height: 20),
-          
+
           // Información del ejercicio
           Card(
             elevation: 4,
@@ -202,18 +204,21 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoRow(Icons.repeat, 'Ciclos', '${_currentExercise.cycles} repeticiones'),
+                  _buildInfoRow(Icons.repeat, 'Ciclos',
+                      '${_currentExercise.cycles} repeticiones'),
                   SizedBox(height: 12),
-                  _buildInfoRow(Icons.timer, 'Duración', '${_currentExercise.totalDuration ~/ 60} min ${_currentExercise.totalDuration % 60} seg'),
+                  _buildInfoRow(Icons.timer, 'Duración',
+                      '${_currentExercise.totalDuration ~/ 60} min ${_currentExercise.totalDuration % 60} seg'),
                   SizedBox(height: 12),
-                  _buildInfoRow(Icons.trending_up, 'Nivel', _getDifficultyLabel()),
+                  _buildInfoRow(
+                      Icons.trending_up, 'Nivel', _getDifficultyLabel()),
                 ],
               ),
             ),
           ),
-          
+
           SizedBox(height: 20),
-          
+
           // Patrón de respiración
           Card(
             elevation: 4,
@@ -267,9 +272,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               ),
             ),
           ),
-          
+
           SizedBox(height: 20),
-          
+
           // Beneficios
           if (_currentExercise.benefits.isNotEmpty)
             Card(
@@ -297,7 +302,8 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.check_circle, color: Colors.green.shade600, size: 20),
+                            Icon(Icons.check_circle,
+                                color: Colors.green.shade600, size: 20),
                             SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -313,9 +319,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 ),
               ),
             ),
-          
+
           SizedBox(height: 20),
-          
+
           // Instrucciones adicionales
           if (_currentExercise.instructions != null)
             Container(
@@ -342,9 +348,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 ],
               ),
             ),
-          
+
           SizedBox(height: 32),
-          
+
           // Botón para comenzar
           SizedBox(
             width: double.infinity,
@@ -375,9 +381,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               ),
             ),
           ),
-          
+
           SizedBox(height: 16),
-          
+
           // Botón para cambiar ejercicio
           SizedBox(
             width: double.infinity,
@@ -423,8 +429,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
 
   // Indicador de progreso
   Widget _buildProgressIndicator() {
-    final progress = (_currentCycle * _currentExercise.phases.length + _currentPhaseIndex) /
-        (_currentExercise.cycles * _currentExercise.phases.length);
+    final progress =
+        (_currentCycle * _currentExercise.phases.length + _currentPhaseIndex) /
+            (_currentExercise.cycles * _currentExercise.phases.length);
 
     return Container(
       padding: EdgeInsets.all(16),
@@ -471,7 +478,7 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
       builder: (context, child) {
         final currentPhase = _currentExercise.phases[_currentPhaseIndex];
         final color = _getPhaseColor(currentPhase.action);
-        
+
         return Container(
           width: 280,
           height: 280,
@@ -525,7 +532,7 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
   // Instrucción actual
   Widget _buildCurrentInstruction() {
     final currentPhase = _currentExercise.phases[_currentPhaseIndex];
-    
+
     return Column(
       children: [
         Text(
@@ -625,9 +632,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 color: Colors.green.shade600,
               ),
             ),
-            
+
             SizedBox(height: 32),
-            
+
             Text(
               '¡Excelente trabajo!',
               style: GoogleFonts.poppins(
@@ -637,9 +644,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             SizedBox(height: 16),
-            
+
             Text(
               'Has completado el ejercicio de respiración',
               style: GoogleFonts.poppins(
@@ -648,9 +655,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             SizedBox(height: 8),
-            
+
             Text(
               _currentExercise.name,
               style: GoogleFonts.poppins(
@@ -660,9 +667,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             SizedBox(height: 48),
-            
+
             // Pregunta sobre cómo se siente
             Text(
               '¿Cómo te sientes ahora?',
@@ -672,9 +679,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 color: Colors.grey.shade700,
               ),
             ),
-            
+
             SizedBox(height: 16),
-            
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -685,9 +692,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 _buildMoodButton('😟', 'Peor', Colors.red),
               ],
             ),
-            
+
             SizedBox(height: 48),
-            
+
             // Botones de acción
             SizedBox(
               width: double.infinity,
@@ -711,9 +718,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 ),
               ),
             ),
-            
+
             SizedBox(height: 12),
-            
+
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -736,9 +743,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 ),
               ),
             ),
-            
+
             SizedBox(height: 12),
-            
+
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text('Volver al inicio'),
@@ -758,7 +765,8 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
             // Aquí se podría guardar el feedback del usuario
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Se registro en tu perfil que te sientes: $label'),
+                content:
+                    Text('Se registro en tu perfil que te sientes: $label'),
                 duration: Duration(seconds: 1),
               ),
             );
@@ -805,10 +813,10 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
   // Ejecutar fase actual
   void _runPhase() {
     final currentPhase = _currentExercise.phases[_currentPhaseIndex];
-    
+
     // Configurar animación según la fase
     _breathController.duration = Duration(seconds: currentPhase.duration);
-    
+
     switch (currentPhase.action) {
       case BreathingAction.inhale:
         _breathController.forward(from: 0.5);
@@ -823,16 +831,16 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
         _breathController.animateTo(0.5);
         break;
     }
-    
+
     // Iniciar contador
     _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_isPaused) return;
-      
+
       setState(() {
         _remainingSeconds--;
       });
-      
+
       if (_remainingSeconds <= 0) {
         timer.cancel();
         _nextPhase();
@@ -844,22 +852,22 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
   void _nextPhase() {
     setState(() {
       _currentPhaseIndex++;
-      
+
       // Si completamos todas las fases del ciclo
       if (_currentPhaseIndex >= _currentExercise.phases.length) {
         _currentPhaseIndex = 0;
         _currentCycle++;
-        
+
         // Si completamos todos los ciclos
         if (_currentCycle >= _currentExercise.cycles) {
           _completeExercise();
           return;
         }
       }
-      
+
       _remainingSeconds = _currentExercise.phases[_currentPhaseIndex].duration;
     });
-    
+
     _runPhase();
   }
 

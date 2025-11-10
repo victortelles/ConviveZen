@@ -28,13 +28,13 @@ class HomeHeader extends StatelessWidget {
                   color: Colors.pink.shade700,
                 ),
               ),
-              Text(
-                '¿Cómo te sientes hoy?',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.pink.shade600,
-                ),
-              ),
+              // Text(
+              //   '¿Cómo te sientes hoy?',
+              //   style: TextStyle(
+              //     fontSize: 16,
+              //     color: Colors.pink.shade600,
+              //   ),
+              // ),
             ],
           ),
           GestureDetector(
