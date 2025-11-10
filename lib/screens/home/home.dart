@@ -218,6 +218,15 @@ class _HomeScreenState extends State<HomeScreen>
           primaryToolUsed: primaryTool,
           wasHelpful: wasHelpful,
         );
+        
+        // Mostrar notificación de registro exitoso
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Se ha registrado tu ansiedad en tu perfil'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
       } catch (e) {
         print('Error completing crisis log: $e');
       }
@@ -263,6 +272,7 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               HomeHeader(
                 userName: displayName,
+                profileImageUrl: appState.userProfile?.profileImageUrl,
                 onProfileTap: () {
                   Navigator.push(
                     context,

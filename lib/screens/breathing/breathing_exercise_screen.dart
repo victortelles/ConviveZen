@@ -314,10 +314,23 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
             ],
           ),
           SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.white.withOpacity(0.3),
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: TweenAnimationBuilder<double>(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              tween: Tween<double>(
+                begin: 0,
+                end: progress,
+              ),
+              builder: (context, value, _) => LinearProgressIndicator(
+                value: value,
+                backgroundColor: Colors.white.withOpacity(0.3),
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                minHeight: 8,
+              ),
+            ),
+          ),
             minHeight: 8,
             borderRadius: BorderRadius.circular(4),
           ),
