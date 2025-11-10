@@ -61,6 +61,13 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
     _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+
+    // Iniciar ejercicio automáticamente después de mostrar un breve mensaje
+    Future.delayed(Duration(milliseconds: 500), () {
+      if (mounted) {
+        _startExercise();
+      }
+    });
   }
 
   @override
@@ -90,10 +97,11 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
         ),
         elevation: 0,
         actions: [
+          // Botón de información durante el ejercicio
           if (_isStarted && !_isCompleted)
             IconButton(
-              icon: Icon(Icons.refresh, color: Colors.white),
-              onPressed: _resetExercise,
+              icon: Icon(Icons.info_outline, color: Colors.white),
+              onPressed: _showExerciseInfo,
             ),
         ],
       ),
@@ -105,10 +113,6 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
 
   // Pantalla del ejercicio
   Widget _buildExerciseScreen() {
-    if (!_isStarted) {
-      return _buildIntroScreen();
-    }
-
     return Column(
       children: [
         // Indicador de progreso
@@ -138,289 +142,6 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 _buildControlButtons(),
               ],
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Pantalla de introducción
-  Widget _buildIntroScreen() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Descripción del ejercicio
-          Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.air, color: Colors.blue.shade600, size: 32),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _currentExercise.name,
-                          style: GoogleFonts.poppins(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade800,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    _currentExercise.description,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          SizedBox(height: 20),
-
-          // Información del ejercicio
-          Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildInfoRow(Icons.repeat, 'Ciclos',
-                      '${_currentExercise.cycles} repeticiones'),
-                  SizedBox(height: 12),
-                  _buildInfoRow(Icons.timer, 'Duración',
-                      '${_currentExercise.totalDuration ~/ 60} min ${_currentExercise.totalDuration % 60} seg'),
-                  SizedBox(height: 12),
-                  _buildInfoRow(
-                      Icons.trending_up, 'Nivel', _getDifficultyLabel()),
-                ],
-              ),
-            ),
-          ),
-
-          SizedBox(height: 20),
-
-          // Patrón de respiración
-          Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Patrón de respiración',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blue.shade800,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  ..._currentExercise.phases.map((phase) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6),
-                      child: Row(
-                        children: [
-                          Icon(
-                            _getPhaseIcon(phase.action),
-                            color: _getPhaseColor(phase.action),
-                            size: 20,
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              '${phase.name}: ${phase.instruction}',
-                              style: GoogleFonts.poppins(fontSize: 13),
-                            ),
-                          ),
-                          Text(
-                            '${phase.duration}s',
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.blue.shade600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-          ),
-
-          SizedBox(height: 20),
-
-          // Beneficios
-          if (_currentExercise.benefits.isNotEmpty)
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Beneficios',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.green.shade700,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    ..._currentExercise.benefits.map((benefit) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(Icons.check_circle,
-                                color: Colors.green.shade600, size: 20),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                benefit,
-                                style: GoogleFonts.poppins(fontSize: 13),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ],
-                ),
-              ),
-            ),
-
-          SizedBox(height: 20),
-
-          // Instrucciones adicionales
-          if (_currentExercise.instructions != null)
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blue.shade200),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(Icons.info_outline, color: Colors.blue.shade700),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      _currentExercise.instructions!,
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: Colors.blue.shade800,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-          SizedBox(height: 32),
-
-          // Botón para comenzar
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: _startExercise,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade500,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                elevation: 4,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.play_arrow, size: 28),
-                  SizedBox(width: 12),
-                  Text(
-                    'Comenzar ejercicio',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          SizedBox(height: 16),
-
-          // Botón para cambiar ejercicio
-          SizedBox(
-            width: double.infinity,
-            child: TextButton.icon(
-              onPressed: _changeExercise,
-              icon: Icon(Icons.shuffle),
-              label: Text('Probar otro ejercicio'),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.blue.shade600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Widget con información
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.blue.shade600, size: 20),
-        SizedBox(width: 12),
-        Text(
-          '$label:',
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: Colors.grey.shade700,
-          ),
-        ),
-        SizedBox(width: 8),
-        Text(
-          value,
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.blue.shade800,
           ),
         ),
       ],
@@ -703,7 +424,6 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
                 onPressed: () {
                   setState(() {
                     _isCompleted = false;
-                    _isStarted = false;
                   });
                   _resetExercise();
                 },
@@ -726,11 +446,10 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               height: 50,
               child: OutlinedButton.icon(
                 onPressed: () {
-                  _changeExercise();
                   setState(() {
                     _isCompleted = false;
-                    _isStarted = false;
                   });
+                  _changeExercise();
                 },
                 icon: Icon(Icons.shuffle),
                 label: Text('Probar otro ejercicio'),
@@ -918,6 +637,13 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
       _isCompleted = false;
     });
     _timer?.cancel();
+    
+    // Iniciar el nuevo ejercicio automáticamente
+    Future.delayed(Duration(milliseconds: 500), () {
+      if (mounted) {
+        _startExercise();
+      }
+    });
   }
 
   // Confirmar salida
@@ -955,6 +681,191 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
     } else {
       Navigator.pop(context);
     }
+  }
+
+  // Mostrar información del ejercicio (botón info)
+  void _showExerciseInfo() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Container(
+          padding: EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Handle visual
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+
+                // Título
+                Text(
+                  _currentExercise.name,
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue.shade800,
+                  ),
+                ),
+                SizedBox(height: 8),
+
+                // Descripción
+                Text(
+                  _currentExercise.description,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                SizedBox(height: 20),
+
+                // Patrón de respiración
+                Text(
+                  'Patrón',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue.shade800,
+                  ),
+                ),
+                SizedBox(height: 8),
+                ..._currentExercise.phases.map((phase) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _getPhaseIcon(phase.action),
+                          color: _getPhaseColor(phase.action),
+                          size: 18,
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            phase.instruction,
+                            style: GoogleFonts.poppins(fontSize: 13),
+                          ),
+                        ),
+                        Text(
+                          '${phase.duration}s',
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blue.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                
+                SizedBox(height: 20),
+
+                // Beneficios
+                if (_currentExercise.benefits.isNotEmpty) ...[
+                  Text(
+                    'Beneficios',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.green.shade700,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  ..._currentExercise.benefits.map((benefit) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.check_circle, color: Colors.green.shade600, size: 18),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              benefit,
+                              style: GoogleFonts.poppins(fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ],
+
+                // Instrucciones especiales
+                if (_currentExercise.instructions != null) ...[
+                  SizedBox(height: 20),
+                  Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _currentExercise.instructions!,
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: Colors.blue.shade800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
+                SizedBox(height: 20),
+
+                // Botón cerrar
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade500,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Cerrar',
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   // Obtener color de fondo según la fase
