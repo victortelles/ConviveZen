@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../providers/app_state.dart';
 import '../profile/profile.dart';
 import '../music/music_screen.dart';
+import '../contacts/emergency_contacts_screen.dart';
+import '../breathing/breathing_exercise_screen.dart';
 import 'widgets/emergency_button.dart';
 import 'widgets/emergency_tools_modal.dart';
 import 'widgets/home_header.dart';
@@ -83,8 +85,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _launchBreathingExercise() {
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Ejercicio de respiración próximamente')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BreathingExerciseScreen(),
+      ),
     );
   }
 
@@ -121,8 +126,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _showEmergencyContacts() {
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Contactos de emergencia próximamente')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EmergencyContactsScreen(isEmergencyMode: true),
+      ),
     );
   }
 
