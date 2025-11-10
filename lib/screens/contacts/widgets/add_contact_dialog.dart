@@ -162,22 +162,40 @@ class _AddContactDialogState extends State<AddContactDialog> {
                 Row(
                   children: _contactTypeOptions.map((option) {
                     final isSelected = _selectedContactType == option['value'];
-                    return Expanded(
+                    return AnimatedContainer(
+                      duration: Duration(milliseconds: 220),
+                      curve: Curves.easeInOut,
+                      width: isSelected ? 160 : 48,
                       child: Padding(
                         padding: EdgeInsets.only(right: 8),
                         child: ChoiceChip(
-                          label: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                option['icon'],
-                                size: 16,
-                                color: isSelected ? Colors.white : Colors.grey.shade700,
-                              ),
-                              SizedBox(width: 4),
-                              Text(option['label']),
-                            ],
-                          ),
+                          avatar: null,
+                          label: isSelected
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      option['icon'],
+                                      size: 18,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(option['label'],
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          color: Colors.white,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Icon(
+                                  option['icon'],
+                                  size: 18,
+                                  color: Colors.grey.shade700,
+                                ),
                           selected: isSelected,
                           onSelected: (selected) {
                             setState(() {
@@ -186,7 +204,7 @@ class _AddContactDialogState extends State<AddContactDialog> {
                           },
                           selectedColor: Colors.pink.shade400,
                           labelStyle: GoogleFonts.poppins(
-                            fontSize: 11,
+                            fontSize: 13,
                             color: isSelected ? Colors.white : Colors.grey.shade700,
                           ),
                         ),

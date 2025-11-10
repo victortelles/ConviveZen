@@ -758,7 +758,7 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
             // Aquí se podría guardar el feedback del usuario
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Gracias por tu feedback'),
+                content: Text('Se registro en tu perfil que te sientes: $label'),
                 duration: Duration(seconds: 1),
               ),
             );
