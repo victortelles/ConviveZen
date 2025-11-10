@@ -699,17 +699,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           SizedBox(height: 12),
           if (isPremium) ...[
-            _buildFeatureItem('Meditaciones guiadas personalizadas'),
+            _buildFeatureItem('Todo lo gratuito +'),
             _buildFeatureItem('Asistente IA especializado en ansiedad'),
-            _buildFeatureItem('Ejercicios avanzados de relajación'),
-            _buildFeatureItem('Análisis completo de tu bienestar'),
-            _buildFeatureItem('Alertas inteligentes de prevención'),
+            _buildFeatureItem('Estadísticas y registro historial'),
+            _buildFeatureItem('Juegos interactivos anti-ansiedad'),
           ] else ...[
             _buildFeatureItem('Botón de pánico inmediato'),
             _buildFeatureItem('Ejercicios básicos de respiración'),
-            _buildFeatureItem('Música calmante esencial'),
+            _buildFeatureItem('Música relajante/calmante'),
             _buildFeatureItem('Contactos de confianza'),
-            _buildFeatureItem('Registro simple de emociones'),
           ],
           SizedBox(height: 16),
           SizedBox(

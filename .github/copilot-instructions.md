@@ -105,15 +105,6 @@ El objetivo es que la app, al activar el modo emergencia y seleccionar música, 
 - La app debe consultar Firestore para obtener el género musical preferido del usuario.
 - La reproducción directa no es posible, solo se puede abrir la app con una búsqueda, playlist o álbum sugerido.
 
-#### Checklist de implementación:
-- [x] Consultar Firestore para obtener el género musical preferido del usuario (`musicGenres` en preferencias).
-- [x] Detectar las aplicaciones de música instaladas en el dispositivo (Android: intent, iOS: solo abrir si está instalada).
-- [x] Seleccionar la app de música por defecto (puede ser configurable por el usuario o por prioridad: Spotify > YouTube Music > Apple Music).
-- [x] Mapear géneros musicales a URLs/Intents para cada app (ejemplo: abrir Spotify con búsqueda de playlist por género).
-- [x] Implementar lógica para abrir la app de música seleccionada usando `url_launcher` o `android_intent_plus`.
-- [x] Manejar casos donde ninguna app de música esté instalada (mostrar mensaje al usuario).
-- [ ] Probar el flujo en Android y iOS, ajustando según limitaciones de cada plataforma.
-
 #### Estructura de archivos implementados:
 ```
 lib/
