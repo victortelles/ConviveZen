@@ -177,7 +177,7 @@ class _TriggersSettingsScreenState extends State<TriggersSettingsScreen> {
                       description: trigger['description'],
                       isSelected: isSelected,
                       onTap: () => _toggleTrigger(trigger['key']),
-                      primaryColor: Colors.yellow,
+                      primaryColor: Colors.black54,
                       iconColor: trigger['iconColor'] ?? Colors.orange.shade600,
                     );
                   },

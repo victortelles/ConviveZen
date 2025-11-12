@@ -39,49 +39,13 @@ class EmergencyToolButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Stack(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: isPremium ? Colors.grey.shade400 : color,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Icon(
-                    isPremium ? Icons.lock : icon,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: isPremium ? Colors.grey.shade600 : Colors.pink.shade700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  isPremium ? 'Solo Premium' : subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isPremium ? Colors.grey.shade500 : Colors.pink.shade500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+            // Badge Premium en la parte superior si es premium
             if (isPremium)
-              Positioned(
-                top: 0,
-                right: 0,
+              Align(
+                alignment: Alignment.topRight,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
@@ -98,6 +62,47 @@ class EmergencyToolButton extends StatelessWidget {
                   ),
                 ),
               ),
+            
+            // Contenido centrado
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: isPremium ? Colors.grey.shade400 : color,
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Icon(
+                      isPremium ? Icons.lock : icon,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: isPremium ? Colors.grey.shade600 : Colors.pink.shade700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    isPremium ? 'Solo Premium' : subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isPremium ? Colors.grey.shade500 : Colors.pink.shade500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

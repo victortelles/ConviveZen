@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/profile_option_tile.dart';
 import '../widgets/profile_switch_tile.dart';
+import '../../contacts/emergency_contacts_screen.dart';
+import '../screens/account_privacy_screen.dart';
 
 class ConfigurationSection extends StatelessWidget {
   final Function() onNavigateToProfileSettings;
@@ -26,7 +28,30 @@ class ConfigurationSection extends StatelessWidget {
               subtitle: "Datos personales, contraseña y privacidad",
               icon: Icons.account_circle,
               color: Colors.pink,
-              onTap: onNavigateToProfileSettings,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AccountPrivacyScreen(),
+                  ),
+                );
+              },
+              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            ),
+            const Divider(height: 1),
+            ProfileOptionTile(
+              title: "Contactos de Emergencia",
+              subtitle: "Gestionar personas de confianza",
+              icon: Icons.contact_phone,
+              color: Colors.red,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EmergencyContactsScreen(isEmergencyMode: false),
+                  ),
+                );
+              },
               trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             ),
             const Divider(height: 1),
