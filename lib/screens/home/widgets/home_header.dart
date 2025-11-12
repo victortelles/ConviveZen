@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class HomeHeader extends StatelessWidget {
   final String userName;
+  final String? profileImageUrl;
   final VoidCallback onProfileTap;
 
   const HomeHeader({
     Key? key,
     required this.userName,
+    this.profileImageUrl,
     required this.onProfileTap,
   }) : super(key: key);
 
@@ -28,13 +30,13 @@ class HomeHeader extends StatelessWidget {
                   color: Colors.pink.shade700,
                 ),
               ),
-              Text(
-                '¿Cómo te sientes hoy?',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.pink.shade600,
-                ),
-              ),
+              // Text(
+              //   '¿Cómo te sientes hoy?',
+              //   style: TextStyle(
+              //     fontSize: 16,
+              //     color: Colors.pink.shade600,
+              //   ),
+              // ),
             ],
           ),
           GestureDetector(
@@ -45,12 +47,20 @@ class HomeHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.pink.shade200,
                 borderRadius: BorderRadius.circular(25),
+                image: profileImageUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(profileImageUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
               ),
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-                size: 24,
-              ),
+              child: profileImageUrl == null
+                  ? Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 24,
+                    )
+                  : null,
             ),
           ),
         ],
