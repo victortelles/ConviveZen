@@ -272,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               HomeHeader(
                 userName: displayName,
-                profileImageUrl: appState.userProfile?.profileImageUrl,
+                profileImageUrl: appState.userProfile?.profilePic,
                 onProfileTap: () {
                   Navigator.push(
                     context,

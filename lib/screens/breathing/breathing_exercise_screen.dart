@@ -331,9 +331,9 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
               ),
             ),
           ),
-            minHeight: 8,
-            borderRadius: BorderRadius.circular(4),
-          ),
+          //   minHeight: 8,
+          //   borderRadius: BorderRadius.circular(4),
+          // ),
         ],
       ),
     );
